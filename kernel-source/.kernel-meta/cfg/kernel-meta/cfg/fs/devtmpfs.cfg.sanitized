@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/cfg/fs/devtmpfs.cfg
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y

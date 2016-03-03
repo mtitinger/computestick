@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/rfkill/rfkill.cfg
+CONFIG_RFKILL=y

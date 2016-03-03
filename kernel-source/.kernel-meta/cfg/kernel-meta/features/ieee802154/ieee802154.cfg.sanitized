@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/ieee802154/ieee802154.cfg
+CONFIG_IEEE802154=y
+CONFIG_IEEE802154_6LOWPAN=y

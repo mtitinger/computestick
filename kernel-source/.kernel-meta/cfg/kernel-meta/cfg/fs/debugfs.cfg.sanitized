@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/cfg/fs/debugfs.cfg
+CONFIG_DEBUG_FS=y

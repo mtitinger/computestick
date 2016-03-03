@@ -1,0 +1,5 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/igb/igb.cfg
+CONFIG_IGB_DCA=y
+CONFIG_IGB=m
+CONFIG_IGBVF=m

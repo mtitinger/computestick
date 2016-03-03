@@ -1,0 +1,15 @@
+Kconfig
+arch/mips/loongson/Kconfig
+arch/mips/loongson1/Kconfig
+drivers/misc/carma/Kconfig
+drivers/net/wireless/rtl8723bs/Kconfig
+drivers/nfc/st21nfcb/Kconfig
+drivers/staging/i2o/Kconfig
+drivers/staging/media/dt3155v4l/Kconfig
+drivers/staging/unisys/uislib/Kconfig
+drivers/staging/unisys/virthba/Kconfig
+drivers/staging/unisys/virtpci/Kconfig
+drivers/staging/unisys/visorchannel/Kconfig
+drivers/staging/unisys/visorchipset/Kconfig
+drivers/staging/unisys/visorutil/Kconfig
+fs/yaffs2/Kconfig

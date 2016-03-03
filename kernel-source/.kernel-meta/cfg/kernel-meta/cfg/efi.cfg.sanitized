@@ -1,0 +1,7 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/cfg/efi.cfg
+CONFIG_PCI=y
+CONFIG_ACPI=y
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+CONFIG_EFIVAR_FS=m

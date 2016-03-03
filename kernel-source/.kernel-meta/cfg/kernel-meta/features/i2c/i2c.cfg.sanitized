@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/i2c/i2c.cfg
+CONFIG_I2C=y
+CONFIG_I2C_HELPER_AUTO=y

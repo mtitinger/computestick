@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/intel-pinctrl/intel-pinctrl.cfg
+CONFIG_PINCTRL_BAYTRAIL=y
+CONFIG_PINCTRL_CHERRYVIEW=y

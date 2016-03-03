@@ -1,0 +1,6 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/i40e/i40e.cfg
+CONFIG_I40E=m
+CONFIG_DCB=y
+CONFIG_I40E_DCB=y
+CONFIG_I40EVF=m

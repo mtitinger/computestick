@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/blktrace/blktrace.cfg
+CONFIG_BLK_DEV_IO_TRACE=y

@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/cfg/systemd.cfg
+CONFIG_FHANDLE=y

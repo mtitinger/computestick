@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/ciphers/ciphers.cfg
+CONFIG_CRYPTO_AES_NI_INTEL=y

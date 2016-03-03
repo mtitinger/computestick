@@ -1,0 +1,4160 @@
+From 80aa2efba5904cfffde2f6f43232ea1bbfb851ed Mon Sep 17 00:00:00 2001
+From: mike <mike.zhang@wasson.com.hk>
+Date: Tue, 6 Oct 2015 18:04:32 +0800
+Subject: [PATCH 1/2] add intel pmic
+
+---
+ arch/x86/include/asm/intel_basincove_gpadc.h    |  70 +++
+ arch/x86/include/asm/intel_basincove_ocd.h      | 162 +++++++
+ arch/x86/include/asm/intel_byt_buttons.h        |  19 +
+ arch/x86/include/asm/intel_byt_ec.h             | 119 +++++
+ arch/x86/include/asm/intel_bytcr_bcntl.h        |   8 +
+ arch/x86/include/asm/intel_chv.h                | 271 +++++++++++
+ arch/x86/include/asm/intel_crystalcove_gpadc.h  |  31 ++
+ arch/x86/include/asm/intel_crystalcove_pwrsrc.h |   8 +
+ arch/x86/include/asm/intel_em_config.h          | 102 ++++
+ arch/x86/include/asm/intel_mid_gpadc.h          |  19 +
+ arch/x86/include/asm/intel_mid_hsu.h            |  69 +++
+ arch/x86/include/asm/intel_mid_pcihelpers.h     |  35 ++
+ arch/x86/include/asm/intel_mid_powerbtn.h       |  20 +
+ arch/x86/include/asm/intel_mid_pwm.h            |  30 ++
+ arch/x86/include/asm/intel_mid_remoteproc.h     | 118 +++++
+ arch/x86/include/asm/intel_mid_rpmsg.h          |  74 +++
+ arch/x86/include/asm/intel_mid_thermal.h        |  79 ++++
+ arch/x86/include/asm/intel_mid_vrtc.h           |   4 +-
+ arch/x86/include/asm/intel_mip.h                |  32 ++
+ arch/x86/include/asm/intel_psh_ipc.h            |  35 ++
+ arch/x86/include/asm/intel_scu_flis.h           | 588 ++++++++++++++++++++++++
+ arch/x86/include/asm/intel_scu_ipc.h            | 133 ++++--
+ arch/x86/include/asm/intel_scu_ipcutil.h        | 136 ++++++
+ arch/x86/include/asm/intel_scu_pmic.h           |  16 +
+ arch/x86/include/asm/intel_soc_debug.h          |  43 ++
+ arch/x86/include/asm/intel_sst_ctp.h            |  81 ++++
+ arch/x86/include/asm/intel_sst_mrfld.h          |  44 ++
+ arch/x86/include/asm/intel_vlv2.h               |  16 +
+ drivers/mfd/Kconfig                             |  19 +
+ drivers/mfd/Makefile                            |   2 +
+ drivers/mfd/intel_pmic/Makefile                 |   5 +
+ drivers/mfd/intel_pmic/crystal_cove.c           | 156 +++++++
+ drivers/mfd/intel_pmic/dollar_cove.c            | 305 ++++++++++++
+ drivers/mfd/intel_pmic/dollar_cove_ti.c         | 173 +++++++
+ drivers/mfd/intel_pmic/pmic.c                   | 488 ++++++++++++++++++++
+ drivers/mfd/intel_pmic/pmic.h                   |  61 +++
+ drivers/mfd/intel_pmic/pmic_i2c.c               | 144 ++++++
+ include/linux/mfd/intel_mid_pmic.h              |  24 +
+ include/linux/mfd/intel_msic.h                  |  44 ++
+ 40 files changed, 3844 insertions(+), 63 deletions(-)
+ create mode 100644 arch/x86/include/asm/intel_basincove_gpadc.h
+ create mode 100644 arch/x86/include/asm/intel_basincove_ocd.h
+ create mode 100644 arch/x86/include/asm/intel_byt_buttons.h
+ create mode 100644 arch/x86/include/asm/intel_byt_ec.h
+ create mode 100644 arch/x86/include/asm/intel_bytcr_bcntl.h
+ create mode 100644 arch/x86/include/asm/intel_chv.h
+ create mode 100644 arch/x86/include/asm/intel_crystalcove_gpadc.h
+ create mode 100644 arch/x86/include/asm/intel_crystalcove_pwrsrc.h
+ create mode 100644 arch/x86/include/asm/intel_em_config.h
+ create mode 100644 arch/x86/include/asm/intel_mid_gpadc.h
+ create mode 100644 arch/x86/include/asm/intel_mid_hsu.h
+ create mode 100644 arch/x86/include/asm/intel_mid_pcihelpers.h
+ create mode 100644 arch/x86/include/asm/intel_mid_powerbtn.h
+ create mode 100644 arch/x86/include/asm/intel_mid_pwm.h
+ create mode 100644 arch/x86/include/asm/intel_mid_remoteproc.h
+ create mode 100644 arch/x86/include/asm/intel_mid_rpmsg.h
+ create mode 100644 arch/x86/include/asm/intel_mid_thermal.h
+ create mode 100644 arch/x86/include/asm/intel_mip.h
+ create mode 100644 arch/x86/include/asm/intel_psh_ipc.h
+ create mode 100644 arch/x86/include/asm/intel_scu_flis.h
+ create mode 100644 arch/x86/include/asm/intel_scu_ipcutil.h
+ create mode 100644 arch/x86/include/asm/intel_scu_pmic.h
+ create mode 100644 arch/x86/include/asm/intel_soc_debug.h
+ create mode 100644 arch/x86/include/asm/intel_sst_ctp.h
+ create mode 100644 arch/x86/include/asm/intel_sst_mrfld.h
+ create mode 100644 arch/x86/include/asm/intel_vlv2.h
+ create mode 100644 drivers/mfd/intel_pmic/Makefile
+ create mode 100644 drivers/mfd/intel_pmic/crystal_cove.c
+ create mode 100644 drivers/mfd/intel_pmic/dollar_cove.c
+ create mode 100644 drivers/mfd/intel_pmic/dollar_cove_ti.c
+ create mode 100644 drivers/mfd/intel_pmic/pmic.c
+ create mode 100644 drivers/mfd/intel_pmic/pmic.h
+ create mode 100644 drivers/mfd/intel_pmic/pmic_i2c.c
+ create mode 100644 include/linux/mfd/intel_mid_pmic.h
+
+diff --git a/arch/x86/include/asm/intel_basincove_gpadc.h b/arch/x86/include/asm/intel_basincove_gpadc.h
+new file mode 100644
+index 0000000..d083e79
+--- /dev/null
++++ b/arch/x86/include/asm/intel_basincove_gpadc.h
+@@ -0,0 +1,70 @@
++#ifndef __INTEL_BASINCOVE_GPADC_H__
++#define __INTEL_BASINCOVE_GPADC_H__
++
++#define GPADC_VBAT	(1 << 0)
++#define GPADC_BATID	(1 << 1)
++#define GPADC_IBAT	(1 << 2)
++#define GPADC_PMICTEMP	(1 << 3)
++#define GPADC_BATTEMP0	(1 << 4)
++#define GPADC_BATTEMP1	(1 << 5)
++#define GPADC_SYSTEMP0	(1 << 6)
++#define GPADC_SYSTEMP1	(1 << 7)
++#define GPADC_SYSTEMP2	(1 << 8)
++#define GPADC_USBID	(1 << 9)
++#define GPADC_PEAK	(1 << 10)
++#define GPADC_ADC	(1 << 11)
++#define GPADC_VREF	(1 << 12)
++
++#define BCOVE_GPADC_CH_NUM	9
++#define SCOVE_GPADC_CH_NUM	12
++
++#define MUSBID		(1 << 0)
++#define MPEAK		(1 << 1)
++#define MBATTEMP	(1 << 2)
++#define MSYSTEMP	(1 << 3)
++#define MBATT		(1 << 4)
++#define MVIBATT		(1 << 5)
++#define MGPMEAS		(1 << 6)
++#define MCCTICK		(1 << 7)
++
++#define GPADC_RSL(channel, res) (res->data[ffs(channel)-1])
++
++struct gpadc_regmap_t {
++	char *name;
++	int cntl;       /* GPADC Conversion Control Bit indicator */
++	int rslth;      /* GPADC Conversion Result Register Addr High */
++	int rsltl;      /* GPADC Conversion Result Register Addr Low */
++};
++
++struct gpadc_regs_t {
++	u16 gpadcreq;
++	u16 gpadcreq_irqen;
++	u16 gpadcreq_busy;
++	u16 mirqlvl1;
++	u16 mirqlvl1_adc;
++	u16 adc1cntl;
++	u16 adcirq;
++	u16 madcirq;
++};
++
++struct iio_dev;
++
++struct intel_basincove_gpadc_platform_data {
++	int channel_num;
++	unsigned long intr;
++	u8 intr_mask;
++	struct iio_map *gpadc_iio_maps;
++	struct gpadc_regmap_t *gpadc_regmaps;
++	struct gpadc_regs_t *gpadc_regs;
++	const struct iio_chan_spec *gpadc_channels;
++};
++
++struct gpadc_result {
++	int data[SCOVE_GPADC_CH_NUM];
++};
++
++int iio_basincove_gpadc_sample(struct iio_dev *indio_dev,
++				int ch, struct gpadc_result *res);
++
++int intel_basincove_gpadc_sample(int ch, struct gpadc_result *res);
++#endif
+diff --git a/arch/x86/include/asm/intel_basincove_ocd.h b/arch/x86/include/asm/intel_basincove_ocd.h
+new file mode 100644
+index 0000000..faba651
+--- /dev/null
++++ b/arch/x86/include/asm/intel_basincove_ocd.h
+@@ -0,0 +1,162 @@
++#ifndef __INTEL_BASINCOVE_OCD_H__
++#define __INTEL_BASINCOVE_OCD_H__
++
++#define DRIVER_NAME "bcove_bcu"
++#define DEVICE_NAME "mrfl_pmic_bcu"
++
++/* Generic bit representaion macros */
++#define B0	(1 << 0)
++#define B1	(1 << 1)
++#define B2	(1 << 2)
++#define B3	(1 << 3)
++#define B4	(1 << 4)
++#define B5	(1 << 5)
++#define B6	(1 << 6)
++#define B7	(1 << 7)
++
++/* 30 seconds delay macro for VWARN1 interrupt Unmask (enable) */
++#define VWARN2_INTR_EN_DELAY	(30 * HZ)
++
++/* IRQ registers */
++#define BCUIRQ                  0x05
++#define IRQLVL1                 0x01
++#define MIRQLVL1                0x0C
++
++/* Status registers */
++#define S_BCUINT                0x3B
++#define S_BCUCTRL               0x49
++
++/* PMIC SRAM address for BCU register */
++#define PMIC_SRAM_BCU_ADDR      0xFFFFF614
++#define IOMAP_LEN               1
++
++#define NUM_VOLT_LEVELS         3
++#define NUM_CURR_LEVELS         2
++
++#define VWARN_EN_MASK		B3
++#define ICCMAXVCC_EN_MASK	B6
++
++#define MVWARN1_MASK		B0
++#define MVWARN2_MASK		B1
++#define MVCRIT_MASK		B2
++
++#define MVCRIT			B2
++#define MVWARN2			B1
++#define MVWARN1			B0
++
++#define ICCMAXVCC_EN		(1 << 6)
++#define VWARN_EN		(1 << 3)
++#define VCRIT_SHUTDOWN		(1 << 4)
++
++#define BCU_ALERT               (1 << 3)
++#define VWARN1_IRQ              (1 << 0)
++#define VWARN2_IRQ              (1 << 1)
++#define VCRIT_IRQ               (1 << 2)
++#define GSMPULSE_IRQ            (1 << 3)
++#define TXPWRTH_IRQ             (1 << 4)
++
++/* Number of configurable thresholds for current and voltage */
++#define NUM_THRESHOLDS          8
++
++/* BCU real time status flags for corresponding input signals */
++#define SVWARN1                 (1<<0)
++#define SVWARN2                 (1<<1)
++#define SVCRIT                  (1<<2)
++
++/* S_BCUCTRL register status bits */
++#define S_CAMFLTORCH		B3
++#define S_CAMFLDIS		B2
++#define S_BCUDISW2		B1
++
++#define S_BCUDISW2_MASK		B1
++#define S_CAMFLDIS_MASK		B2
++#define S_CAMFLTORCH_MASK	B3
++
++/* check whether bit is sticky or not by checking 5th bit */
++#define IS_STICKY(data)         (!!(data & 0x10))
++
++/* check whether signal asserted for VW1/VW2/VC */
++#define IS_ASSRT_ON_VW1(data)   (!!(data & 0x01))
++#define IS_ASSRT_ON_VW2(data)   (!!(data & 0x02))
++#define IS_ASSRT_ON_VC(data)    (!!(data & 0x04))
++
++/* Configuration registers that monitor the voltage drop */
++#define VWARN1_CFG              0x3C
++#define VWARN2_CFG              0x3D
++#define VCRIT_CFG               0x3E
++#define ICCMAXVSYS_CFG          0x3F
++#define ICCMAXVCC_CFG           0x40
++#define ICCMAXVNN_CFG           0x41
++
++/* Behaviour registers */
++#define VFLEXSRC_BEH            0x42
++#define VFLEXDIS_BEH            0x43
++#define VIBDIS_BEH              0x44
++#define CAMFLTORCH_BEH          0x45
++#define CAMFLDIS_BEH            0x46
++#define BCUDISW2_BEH            0x47
++#define BCUDISCRIT_BEH          0x48
++
++/*IRQ Mask Register*/
++#define MBCUIRQ                 0x10
++
++#define MRFL_SMIP_SRAM_ADDR	0xFFFCE000
++#define MOFD_SMIP_SRAM_ADDR	0xFFFC5C00
++
++/* SMIP offset address from where the BCU related info should be read */
++#define BCU_SMIP_OFFSET		0x3BA
++
++/* No of Bytes we have to read from SMIP from BCU_SMIP_BASE*/
++#define NUM_SMIP_BYTES          14
++
++/* Max length of the register name string */
++#define MAX_REGNAME_LEN		15
++
++/* String to send the uevent along with env info to user space */
++#define EVT_STR	"BCUEVT="
++
++/* Macro to get the mode of acess for the BCU registers	*/
++#define MODE(m)	(((m != S_BCUINT) && (m != BCUIRQ) && (m != IRQLVL1))	\
++			? (S_IRUGO | S_IWUSR) : S_IRUGO)
++
++/* Generic macro to assign the parameters (reg name and address) */
++#define reg_info(x)	{ .name = #x, .addr = x, .mode = MODE(x) }
++
++/* Generic macro to fill the environmental data for bcu uevent */
++#define get_envp(evt)	(EVT_STR#evt)
++
++/*
++* These values are read from SMIP.
++* SMIP contains these entries - default register configurations
++* BCU is programmed to these default values during boot time.
++*/
++
++struct ocd_bcove_config_data {
++	uint8_t vwarn1_cfg;
++	uint8_t vwarn2_cfg;
++	uint8_t vcrit_cfg;
++	uint8_t iccmaxvsys_cfg;
++	uint8_t iccmaxvcc_cfg;
++	uint8_t iccmaxvnn_cfg;
++	uint8_t vflexsrc_beh;
++	uint8_t vflexdis_beh;
++	uint8_t vibdis_beh;
++	uint8_t camfltorch_beh;
++	uint8_t camfldis_beh;
++	uint8_t bcudisw2_beh;
++	uint8_t bcudiscrit_beh;
++	uint8_t mbcuirq;
++} __packed;
++
++struct ocd_platform_data {
++	int (*bcu_config_data) (struct ocd_bcove_config_data *);
++};
++
++struct bcu_reg_info {
++	char	name[MAX_REGNAME_LEN];	/* register name   */
++	u16	addr;			/* offset address  */
++	u16	mode;			/* permission mode */
++};
++
++#endif
++
+diff --git a/arch/x86/include/asm/intel_byt_buttons.h b/arch/x86/include/asm/intel_byt_buttons.h
+new file mode 100644
+index 0000000..042d31d
+--- /dev/null
++++ b/arch/x86/include/asm/intel_byt_buttons.h
+@@ -0,0 +1,19 @@
++#ifndef __INTEL_BYT_BUTTONS_H_
++#define __INTEL_BYT_BUTTONS_H_
++
++struct byt_keys_button {
++	unsigned int code;	/* input event code */
++	unsigned int type;	/* input event type */
++	const char *desc;
++	int active_low;
++	int wakeup;
++};
++
++struct byt_keys_platform_data {
++	struct byt_keys_button *buttons;
++	int nbuttons;
++	unsigned int rep:1;	/* enable/disable auto repeat */
++};
++
++#endif
++
+diff --git a/arch/x86/include/asm/intel_byt_ec.h b/arch/x86/include/asm/intel_byt_ec.h
+new file mode 100644
+index 0000000..8b39413
+--- /dev/null
++++ b/arch/x86/include/asm/intel_byt_ec.h
+@@ -0,0 +1,119 @@
++
++#ifndef __INTEL_BYT_EC_H_
++#define __INTEL_BYT_EC_H_
++
++/*
++ * SCI NOTIFICATIONS: EC When generates an event or interrupts
++ * EC driver has to query the EC and based on the event EC driver
++ * has to notify the corresponding consumer driver.
++ */
++#define BYT_EC_SCI_SMB			0x01	/* SMBus event notification */
++#define BYT_EC_SCI_DEVINSERTION		0x20	/* Device bay insertion SCI */
++#define BYT_EC_SCI_DEVREMOVAL		0x21	/* Device bay removal SCI */
++#define BYT_EC_SCI_NEWCARD		0x22/* NewCard insertion event SCI */
++#define BYT_EC_SCI_ACINSERTION		0x30	/* AC insertion SCI */
++#define BYT_EC_SCI_ACREMOVAL		0x31	/* AC removal SCI */
++#define BYT_EC_SCI_BATTERY		0x32	/* Battery event SCI */
++#define BYT_EC_SCI_BATTERY_PRSNT	0x33/* Battery insertion/removal SCI */
++#define BYT_EC_SCI_BATTERY_OTP		0x34/* Battery Over Temperature SCI */
++ /* Battery Over Temperature to Normal SCI */
++#define BYT_EC_SCI_BATTERY_OTP_CLR	0x35
++/* Battery Extreme Temperature SCI */
++#define BYT_EC_SCI_BATTERY_ETP		0x38
++/* Battery Extreme Temperature Clear SCI */
++#define BYT_EC_SCI_BATTERY_ETP_CLR	0x39
++#define BYT_EC_SCI_DOCKED		0x40	/* Dock complete SCI */
++#define BYT_EC_SCI_UNDOCKED		0x41	/* Undock complete SCI */
++#define BYT_EC_SCI_UNDOCKREQUEST	0x42	/* Undocking request SCI */
++/* Express card insertion/removal SCI */
++#define BYT_EC_SCI_EXPCARDPRSNT		0x43
++
++#define BYT_EC_SCI_RING			0x50/* SCI from ring indicate event */
++#define BYT_EC_SCI_LID			0x51	/* SCI from lid */
++#define BYT_EC_SCI_HOTKEY		0x52	/* SCI from keyboard hotkey */
++/* SCI from virtual battery switch */
++#define BYT_EC_SCI_VB			0x53
++#define BYT_EC_SCI_PWRBTN		0x54	/* SCI from EL power button */
++#define BYT_EC_SCI_RESUME		0x55	/* SCI from Resuming from S3 */
++
++#define BYT_EC_SCI_BT_PWR_OFF		0x60/* SCI from Bluetooth power off */
++#define BYT_EC_SCI_BT_PWR_ON		0x61/* SCI from Bluetooth power on */
++#define BYT_EC_SCI_ALS			0x70	/* SCI from ALS lux change */
++#define BYT_EC_SCI_BURST_ACK		0x90	/* SCI burst acknowledge byte */
++/* SCI for Geyserville break event */
++#define BYT_EC_SCI_GYSRVL		0xB0
++#define BYT_EC_SCI_THERMAL		0xF0	/* Thermal transition SCI */
++/* Thermal trip point transition SCI */
++#define BYT_EC_SCI_THERMTRIP		0xF1
++
++/* Legacy Event from EC */
++#define BYT_EC_SCI_AON_UP		0xD0	/* SCI from AON Up button */
++#define BYT_EC_SCI_AON_DOWN		0xD1	/* SCI from AON Down button */
++#define BYT_EC_SCI_AON_SELECT		0xD2	/* SCI from AON Select button */
++#define BYT_EC_SCI_AON_ESC		0xD3	/* SCI from AON Escape button */
++/* SCI from AON Global Escape button */
++#define BYT_EC_SCI_AON_GESC		0xD4
++
++/* Button Event */
++#define BYT_EC_SCI_VOLUMEUP_BTN		0x80	/* SCI from vol up button */
++#define BYT_EC_SCI_VOLUMEDOWN_BTN	0x81	/* SCI from vol down button */
++#define BYT_EC_SCI_HOME_BTN		0x85	/* SCI from home button */
++#define BYT_EC_SCI_POWER_BTN		0x86	/* SCI from power button */
++
++#define BYT_EC_BUTTON_STATUS		0xC9
++
++/* Button Event */
++#define BYT_EC_SCI_VOLUMEUP_BTN		0x80	/* SCI from vol up button */
++#define BYT_EC_SCI_VOLUMEDOWN_BTN	0x81	/* SCI from vol down button */
++#define BYT_EC_SCI_HOME_BTN		0x85	/* SCI from home button */
++#define BYT_EC_SCI_POWER_BTN		0x86	/* SCI from power button */
++
++#define BYT_EC_BUTTON_STATUS		0xC9
++
++/* EC commands */
++enum byt_ec_commands {
++	BYT_EC_ACPI_ENABLE = 0xAA,
++	BYT_EC_ACPI_DISABLE = 0xAB,
++	BYT_EC_COMMAND_READ = 0x80,
++	BYT_EC_COMMAND_WRITE = 0x81,
++	BYT_EC_BURST_ENABLE = 0x82,
++	BYT_EC_BURST_DISABLE = 0x83,
++	BYT_EC_COMMAND_QUERY = 0x84,
++	BYT_EC_SET_FAN_SPEED = 0x1A,
++	BYT_EC_SET_THERM_THRESHOLD = 0x4A,
++};
++
++#ifdef CONFIG_INTEL_BYT_EC
++extern int byt_ec_read_byte(u8 addr, u8 *val);
++extern int byt_ec_write_byte(u8 addr, u8 val);
++extern int byt_ec_read_word(u8 addr, u16 *val);
++extern int byt_ec_write_word(u8 addr, u16 val);
++extern int byt_ec_send_cmd(u8 command);
++extern void byt_ec_evt_register_notify(struct notifier_block *nb);
++extern void byt_ec_evt_unregister_notify(struct notifier_block *nb);
++#else
++static int byt_ec_read_byte(u8 addr, u8 *val)
++{
++	return 0;
++}
++static int byt_ec_write_byte(u8 addr, u8 val)
++{
++	return 0;
++}
++static int byt_ec_read_word(u8 addr, u16 *val)
++{
++	return 0;
++}
++static int byt_ec_write_word(u8 addr, u16 val)
++{
++	return 0;
++}
++static int byt_ec_send_cmd(u8 command)
++{
++	return 0;
++}
++static void byt_ec_evt_register_notify(struct notifier_block *nb) { }
++static void byt_ec_evt_unregister_notify(struct notifier_block *nb) { }
++#endif
++
++#endif	/* __INTEL_BYT_EC_H_ */
+diff --git a/arch/x86/include/asm/intel_bytcr_bcntl.h b/arch/x86/include/asm/intel_bytcr_bcntl.h
+new file mode 100644
+index 0000000..f34ce7d
+--- /dev/null
++++ b/arch/x86/include/asm/intel_bytcr_bcntl.h
+@@ -0,0 +1,8 @@
++
++#ifndef __INTEL_BYTCR_BCNTL_H_
++#define __INTEL_BYTCR_BCNTL_H_
++
++int intel_bytcr_boost_enable(void);
++int intel_bytcr_boost_disable(void);
++
++#endif
+diff --git a/arch/x86/include/asm/intel_chv.h b/arch/x86/include/asm/intel_chv.h
+new file mode 100644
+index 0000000..71606e6
+--- /dev/null
++++ b/arch/x86/include/asm/intel_chv.h
+@@ -0,0 +1,271 @@
++/* intel_chv.h - Cherrytrail platform GPIO Head File
++ *
++ * Copyright (c) 2013,  Intel Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++ */
++
++#ifndef __INTEL_CHV_GPIO_H__
++#define __INTEL_CHV_GPIO_H__
++
++#define CV_GPIO_BASE		0
++
++#define CV_GPIO_IRQBASE		256
++
++enum {
++	MF_PLT_CLK0 = 0,
++	PWM1 = 1,
++	MF_PLT_CLK1 = 2,
++	MF_PLT_CLK4 = 3,
++	MF_PLT_CLK3 = 4,
++	PWM0 = 5,
++	MF_PLT_CLK5 = 6,
++	MF_PLT_CLK2 = 7,
++
++	SDMMC2_D3_CD_B = 15,
++	SDMMC1_CLK = 16,
++	SDMMC1_D0 = 17,
++	SDMMC2_D1 = 18,
++	SDMMC2_CLK = 19,
++	SDMMC1_D2 = 20,
++	SDMMC2_D2 = 21,
++	SDMMC2_CMD = 22,
++	SDMMC1_CMD = 23,
++	SDMMC1_D1 = 24,
++	SDMMC2_D0 = 25,
++	SDMMC1_D3_CD_B = 26,
++
++	SDMMC3_D1 = 30,
++	SDMMC3_CLK = 31,
++	SDMMC3_D3 = 32,
++	SDMMC3_D2 = 33,
++	SDMMC3_CMD = 34,
++	SDMMC3_D0 = 35,
++
++	MF_LPC_AD2 = 45,
++	LPC_CLKRUNB = 46,
++	MF_LPC_AD0 = 47,
++	LPC_FRAMEB = 48,
++	MF_LPC_CLKOUT1 = 49,
++	MF_LPC_AD3 = 50,
++	MF_LPC_CLKOUT0 = 51,
++	MF_LPC_AD1 = 52,
++
++	SPI1_MISO = 60,
++	SPI1_CSO_B = 61,
++	SPI1_CLK = 62,
++	MMC1_D6 = 63,
++	SPI1_MOSI = 64,
++	MMC1_D5 = 65,
++	SPI1_CS1_B = 66,
++	MMC1_D4_SD_WE = 67,
++	MMC1_D7 = 68,
++	MMC1_RCLK = 69,
++
++	USB_OC1_B = 75,
++	PMU_RESETBUTTON_B = 76,
++	GPIO_ALERT = 77,
++	SDMMC3_PWR_EN_B = 78,
++	ILB_SERIRQ = 79,
++	USB_OC0_B = 80,
++	SDMMC3_CD_B = 81,
++	SPKR = 82,
++	SUSPWRDNACK = 83,
++	SPARE_PIN = 84,
++	SDMMC3_1P8_EN = 85,
++
++	CV_NGPIO_SOUTHEAST,
++};
++
++enum {
++	GPIO_DFX_0 = 0,
++	GPIO_DFX_3 = 1,
++	GPIO_DFX_7 = 2,
++	GPIO_DFX_1 = 3,
++	GPIO_DFX_5 = 4,
++	GPIO_DFX_4 = 5,
++	GPIO_DFX_8 = 6,
++	GPIO_DFX_2 = 7,
++	GPIO_DFX_6 = 8,
++
++	GPIO_SUS0 = 15,
++	SEC_GPIO_SUS10 = 16,
++	GPIO_SUS3 = 17,
++	GPIO_SUS7 = 18,
++	GPIO_SUS1 = 19,
++	GPIO_SUS5 = 20,
++	SEC_GPIO_SUS11 = 21,
++	GPIO_SUS4 = 22,
++	SEC_GPIO_SUS8 = 23,
++	GPIO_SUS2 = 24,
++	GPIO_SUS6 = 25,
++	CX_PREQ_B = 26,
++	SEC_GPIO_SUS9 = 27,
++
++	TRST_B = 30,
++	TCK = 31,
++	PROCHOT_B = 32,
++	SVIDO_DATA = 33,
++	TMS = 34,
++	CX_PRDY_B_2 = 35,
++	TDO_2 = 36,
++	CX_PRDY_B = 37,
++	SVIDO_ALERT_B = 38,
++	TDO = 39,
++	SVIDO_CLK = 40,
++	TDI = 41,
++
++	GP_CAMERASB_05 = 45,
++	GP_CAMERASB_02 = 46,
++	GP_CAMERASB_08 = 47,
++	GP_CAMERASB_00 = 48,
++	GP_CAMERASB_06 = 49,
++	GP_CAMERASB_10 = 50,
++	GP_CAMERASB_03 = 51,
++	GP_CAMERASB_09 = 52,
++	GP_CAMERASB_01 = 53,
++	GP_CAMERASB_07 = 54,
++	GP_CAMERASB_11 = 55,
++	GP_CAMERASB_04 = 56,
++
++	PANEL0_BKLTEN = 60,
++	HV_DDI0_HPD = 61,
++	HV_DDI2_DDC_SDA = 62,
++	PANEL1_BKLTCTL = 63,
++	HV_DDI1_HPD = 64,
++	PANEL0_BKLTCTL = 65,
++	HV_DDI0_DDC_SDA = 66,
++	HV_DDI2_DDC_SCL = 67,
++	HV_DDI2_HPD = 68,
++	PANEL1_VDDEN = 69,
++	PANEL1_BKLTEN = 70,
++	HV_DDI0_DDC_SCL = 71,
++	PANEL0_VDDEN = 72,
++
++	CV_NGPIO_NORTH,
++};
++
++enum {
++	PMU_SLP_S3_B = 0,
++	PMU_BATLOW_B = 1,
++	SUS_STAT_B = 2,
++	PMU_SLP_S0IX_B = 3,
++	PMU_AC_PRESENT = 4,
++	PMU_PLTRST_B = 5,
++	PMU_SUSCLK = 6,
++	PMU_SLP_LAN_B = 7,
++	PMU_PWRBTN_B = 8,
++	PMU_SLP_S4_B = 9,
++	PMU_WAKE_B = 10,
++	PMU_WAKE_LAN_B = 11,
++
++	MF_ISH_GPIO_3 = 15,
++	MF_ISH_GPIO_7 = 16,
++	MF_ISH_I2C1_SCL = 17,
++	MF_ISH_GPIO_1 = 18,
++	MF_ISH_GPIO_5 = 19,
++	MF_ISH_GPIO_9 = 20,
++	MF_ISH_GPIO_0 = 21,
++	MF_ISH_GPIO_4 = 22,
++	MF_ISH_GPIO_8 = 23,
++	MF_ISH_GPIO_2 = 24,
++	MF_ISH_GPIO_6 = 25,
++	MF_ISH_I2C1_SDA = 26,
++	CV_NGPIO_EAST,
++};
++
++enum {
++	FST_SPI_D2 = 0,
++	FST_SPI_D0 = 1,
++	FST_SPI_CLK = 2,
++	FST_SPI_D3 = 3,
++	FST_SPI_CS1_B = 4,
++	FST_SPI_D1 = 5,
++	FST_SPI_CS0_B = 6,
++	FST_SPI_CS2_B = 7,
++
++	UART1_RTS_B = 15,
++	UART1_RXD = 16,
++	UART2_RXD = 17,
++	UART1_CTS_B = 18,
++	UART2_RTS_B = 19,
++	UART1_TXD = 20,
++	UART2_TXD = 21,
++	UART2_CTS_B = 22,
++
++	MF_HDA_CLK = 30,
++	MF_HDA_RSTB = 31,
++	MF_HDA_SDIO = 32,
++	MF_HDA_SDO = 33,
++	MF_HDA_DOCKRSTB = 34,
++	MF_HDA_SYNC = 35,
++	MF_HDA_SDI1 = 36,
++	MF_HDA_DOCKENB = 37,
++
++	I2C5_SDA = 45,
++	I2C4_SDA = 46,
++
++	I2C6_SDA = 49,
++	I2C5_SCL = 50,
++	I2C_NFC_SDA = 51,
++	I2C4_SCL = 52,
++	I2C6_SCL = 53,
++	I2C_NFC_SCL = 54,
++
++	I2C1_SDA = 60,
++	I2C0_SDA = 61,
++	I2C2_SDA = 62,
++	I2C1_SCL = 63,
++	I2C3_SDA = 64,
++	I2C0_SCL = 65,
++	I2C2_SCL = 66,
++	I2C3_SCL = 67,
++
++	SATA_GP0 = 75,
++	SATA_GP1 = 76,
++	SATA_LEDN = 77,
++	SATA_GP2 = 78,
++	MF_SMB_ALERTB = 79,
++	SATA_GP3 = 80,
++	MF_SMB_CLK = 81,
++	MF_SMB_DATA = 82,
++
++	PCIE_CLKREQ0B = 90,
++	PCIE_CLKREQ1B = 91,
++	GP_SSP_2_CLK = 92,
++	PCIE_CLKREQ2B = 93,
++	GP_SSP_2_RXD = 94,
++	PCIE_CLKREQ3B = 95,
++	GP_SSP_2_FS = 96,
++	GP_SSP_2_TXD = 97,
++
++	CV_NGPIO_SOUTHWEST,
++};
++
++/* GPIO number bases */
++#define CV_GPIO_SOUTHWEST_BASE		CV_GPIO_BASE
++#define CV_GPIO_NORTH_BASE		(CV_GPIO_SOUTHWEST_BASE +	\
++					 CV_NGPIO_SOUTHWEST)
++#define CV_GPIO_EAST_BASE		(CV_GPIO_NORTH_BASE + CV_NGPIO_NORTH)
++#define CV_GPIO_SOUTHEAST_BASE		(CV_GPIO_EAST_BASE + CV_NGPIO_EAST)
++
++/* GPIO IRQ bases */
++#define CV_GPIO_SOUTHWEST_IRQBASE	CV_GPIO_IRQBASE
++#define CV_GPIO_NORTH_IRQBASE		(CV_GPIO_SOUTHWEST_IRQBASE +	\
++					 CV_NGPIO_SOUTHWEST)
++#define CV_GPIO_EAST_IRQBASE		(CV_GPIO_NORTH_IRQBASE +	\
++					 CV_NGPIO_NORTH)
++#define CV_GPIO_SOUTHEAST_IRQBASE	(CV_GPIO_EAST_IRQBASE + CV_NGPIO_EAST)
++
++#endif
+diff --git a/arch/x86/include/asm/intel_crystalcove_gpadc.h b/arch/x86/include/asm/intel_crystalcove_gpadc.h
+new file mode 100644
+index 0000000..c23007d
+--- /dev/null
++++ b/arch/x86/include/asm/intel_crystalcove_gpadc.h
+@@ -0,0 +1,31 @@
++#ifndef __INTEL_CRYSTALCOVE_GPADC_H__
++#define __INTEL_CRYSTALCOVE_GPADC_H__
++
++#define GPADC_VBAT		(1 << 0)
++#define GPADC_BATID		(1 << 1)
++#define GPADC_PMICTEMP		(1 << 2)
++#define GPADC_BATTEMP0		(1 << 3)
++#define GPADC_BATTEMP1		(1 << 4)
++#define GPADC_SYSTEMP0		(1 << 5)
++#define GPADC_SYSTEMP1		(1 << 6)
++#define GPADC_SYSTEMP2		(1 << 7)
++#define GPADC_VCCCUR		(1 << 8)
++#define GPADC_VNNCUR		(1 << 9)
++#define GPADC_V1P0ACUR		(1 << 10)
++#define GPADC_V1P05SCUR		(1 << 11)
++#define GPADC_VDDQCUR		(1 << 12)
++#define GPADC_CH_NUM	13
++
++#define GPADC_RSL(channel, res) (res->data[ffs(channel)-1])
++
++struct iio_dev;
++
++struct gpadc_result {
++	int data[GPADC_CH_NUM];
++};
++
++int iio_crystalcove_gpadc_sample(struct iio_dev *indio_dev,
++				int ch, struct gpadc_result *res);
++
++int intel_crystalcove_gpadc_sample(int ch, struct gpadc_result *res);
++#endif
+diff --git a/arch/x86/include/asm/intel_crystalcove_pwrsrc.h b/arch/x86/include/asm/intel_crystalcove_pwrsrc.h
+new file mode 100644
+index 0000000..2df0595
+--- /dev/null
++++ b/arch/x86/include/asm/intel_crystalcove_pwrsrc.h
+@@ -0,0 +1,8 @@
++
++#ifndef __INTEL_CRYSTALCOVE_PWRSRC_H_
++#define __INTEL_CRYSTALCOVE_PWRSRC_H_
++
++int crystal_cove_enable_vbus(void);
++int crystal_cove_disable_vbus(void);
++int crystal_cove_vbus_on_status(void);
++#endif
+diff --git a/arch/x86/include/asm/intel_em_config.h b/arch/x86/include/asm/intel_em_config.h
+new file mode 100644
+index 0000000..02d0e3e
+--- /dev/null
++++ b/arch/x86/include/asm/intel_em_config.h
+@@ -0,0 +1,102 @@
++/*
++ * intel_em_config.h : Intel EM configuration setup code
++ *
++ * (C) Copyright 2014 Intel Corporation
++ * Author: Kotakonda, Venkataramana <venkataramana.kotakonda@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++#ifndef _INTEL_EM_CONFIG_H
++#define _INTEL_EM_CONFIG_H
++
++#include <linux/types.h>
++#include <linux/acpi.h>
++#include <linux/power/battery_id.h>
++
++
++struct em_config_oem0_data {
++	char batt_id[BATTID_STR_LEN];
++	 u8 turbo;
++	 u8 batt_type;
++	u16 capacity;
++	u16 volt_max;
++	u16 chrg_term_ma;
++	u16 low_batt_thr;
++	u8  safe_dischrg_ul;
++	u8  safe_dischrg_ll;
++	u16 temp_mon_ranges;
++	struct ps_temp_chg_table temp_mon_range[BATT_TEMP_NR_RNG];
++	/* Temperature lower limit */
++	u16 temp_low_lim;
++} __packed;
++
++
++/********* OEM1 Table Structures ****************/
++struct em_config_oem1_data {
++	u8 fpo_0;
++	u8 fpo_1;
++	u8 dbiin_gpio;
++	u8 dbiout_gpio;
++	u8 batchptyp;
++	u16 ia_apps_run_volt;
++	u8 batid_dbibase;
++	u8 batid_anlgbase;
++	u8 ia_apps_cap;
++	u16 vbatt_freq_lmt;
++	u8 cap_freq_idx;
++	u8 rsvd_1; /* reserved bit*/
++	u8 batidx;
++	u8 ia_apps_to_use;
++	u8 turbo_chrg;
++} __packed;
++
++#ifdef CONFIG_ACPI
++/*
++ * em_config_get_oem0_data - This function fetches OEM0 table .
++ * @data : Pointer to OEM0 data structure in which data should be filled.
++ *
++ * Returns number bytes fetched (+ve) on success or 0 on error.
++ *
++ */
++int em_config_get_oem0_data(struct em_config_oem0_data *data);
++
++/*
++ * em_config_get_oem1_data - This function fetches OEM1 table .
++ * @data : Pointer to OEM1 data structure in which data should be filled.
++ *
++ * Returns number bytes fetched (+ve) on success or 0 on error.
++ *
++ */
++int em_config_get_oem1_data(struct em_config_oem1_data *data);
++
++/*
++ * em_config_get_charge_profile - This function fetches
++ *				charger profile for connected battery.
++ * @chrg_prof : Pointer to charger profile structure in
++ *				which profile should be filled.
++ *
++ * Returns number bytes fetched (+ve) on success or 0 on error.
++ *
++ */
++int em_config_get_charge_profile(struct ps_pse_mod_prof *chrg_prof);
++
++#else
++
++static int em_config_get_oem0_data(struct em_config_oem0_data *data)
++{
++	return 0;
++}
++static int em_config_get_oem1_data(struct em_config_oem1_data *data)
++{
++	return 0;
++}
++static int em_config_get_charge_profile(struct ps_pse_mod_prof *chrg_prof)
++{
++	return 0;
++}
++#endif /* CONFIG_ACPI */
++
++#endif /*_INTEL_EM_CONFIG_H */
+diff --git a/arch/x86/include/asm/intel_mid_gpadc.h b/arch/x86/include/asm/intel_mid_gpadc.h
+new file mode 100644
+index 0000000..ba62f83
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_gpadc.h
+@@ -0,0 +1,19 @@
++#ifndef __INTEL_MID_GPADC_H__
++#define __INTEL_MID_GPADC_H__
++
++struct intel_mid_gpadc_platform_data {
++	unsigned long intr;
++};
++
++#define CH_NEED_VREF		(1 << 8)
++#define CH_NEED_VCALIB		(1 << 9)
++#define CH_NEED_ICALIB		(1 << 10)
++
++int intel_mid_gpadc_gsmpulse_sample(int *vol, int *cur);
++int intel_mid_gpadc_sample(void *handle, int sample_count, ...);
++int get_gpadc_sample(void *handle, int sample_count, int *buffer);
++void intel_mid_gpadc_free(void *handle);
++void *intel_mid_gpadc_alloc(int count, ...);
++void *gpadc_alloc_channels(int count, int *channel_info);
++#endif
++
+diff --git a/arch/x86/include/asm/intel_mid_hsu.h b/arch/x86/include/asm/intel_mid_hsu.h
+new file mode 100644
+index 0000000..36b91fc
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_hsu.h
+@@ -0,0 +1,69 @@
++#ifndef __INTEL_MID_HSU_H__
++#define __INTEL_MID_HSU_H__
++
++#define hsu_port_func_max 4
++
++enum {
++	hsu_port0,
++	hsu_port1,
++	hsu_port2,
++	hsu_port_share,
++	hsu_port_max,
++	hsu_dma,
++};
++
++enum {
++	bt_port,
++	modem_port,
++	gps_port,
++	debug_port,
++};
++
++enum {
++	hsu_intel,
++	hsu_dw,
++};
++
++struct hsu_port_cfg {
++	int type;
++	int hw_ip;
++	int index;
++	char *name;
++	int idle;
++	int has_alt;
++	int alt;
++	int force_suspend;
++	int preamble;
++	int hw_context_save;
++	int hw_ctrl_cts;
++	struct device *dev;
++	int (*hw_init)(struct device *dev, int port);
++	void(*hw_set_alt)(int port);
++	void(*hw_set_rts)(int port, int value);
++	void(*hw_suspend)(int port, struct device *dev, irq_handler_t wake_isr);
++	void(*hw_suspend_post)(int port);
++	void(*hw_resume)(int port, struct device *dev);
++	unsigned int (*hw_get_clk)(void);
++	void (*wake_peer)(struct device *tty);
++	void (*set_clk)(unsigned int m, unsigned int n,
++			void __iomem *addr);
++	void (*hw_reset)(void __iomem *addr);
++};
++
++
++void intel_mid_hsu_suspend(int port, struct device *dev,
++				irq_handler_t wake_isr);
++void intel_mid_hsu_resume(int port, struct device *dev);
++void intel_mid_hsu_rts(int port, int value);
++void intel_mid_hsu_switch(int port);
++int intel_mid_hsu_init(struct device *dev, int port);
++int intel_mid_hsu_func_to_port(unsigned int func);
++unsigned int intel_mid_hsu_get_clk(void);
++int hsu_register_board_info(void *inf);
++void intel_mid_hsu_suspend_post(int port);
++struct device *intel_mid_hsu_set_wake_peer(int port,
++			void (*wake_peer)(struct device *));
++void intel_mid_hsu_reset(void __iomem *addr);
++void intel_mid_hsu_set_clk(unsigned int m, unsigned int n,
++			void __iomem *addr);
++#endif
+diff --git a/arch/x86/include/asm/intel_mid_pcihelpers.h b/arch/x86/include/asm/intel_mid_pcihelpers.h
+new file mode 100644
+index 0000000..b7c079f
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_pcihelpers.h
+@@ -0,0 +1,35 @@
++/*
++ * Access to message bus through three registers
++ * in CUNIT(0:0:0) PCI configuration space.
++ * MSGBUS_CTRL_REG(0xD0):
++ *   31:24      = message bus opcode
++ *   23:16      = message bus port
++ *   15:8       = message bus address, low 8 bits.
++ *   7:4        = message bus byte enables
++ * MSGBUS_CTRL_EXT_REG(0xD8):
++ *   31:8       = message bus address, high 24 bits.
++ * MSGBUS_DATA_REG(0xD4):
++ *   hold the data for write or read
++ */
++#define PCI_ROOT_MSGBUS_CTRL_REG        0xD0
++#define PCI_ROOT_MSGBUS_DATA_REG        0xD4
++#define PCI_ROOT_MSGBUS_CTRL_EXT_REG    0xD8
++#define PCI_ROOT_MSGBUS_READ            0x10
++#define PCI_ROOT_MSGBUS_WRITE           0x11
++#define PCI_ROOT_MSGBUS_DWORD_ENABLE    0xf0
++
++/* In BYT platform for all internal PCI devices d3 delay
++ * of 3 ms is sufficient. Default value of 10 ms is overkill.
++ */
++#define INTERNAL_PCI_PM_D3_WAIT		3
++
++#define ISP_SUB_CLASS			0x80
++#define SUB_CLASS_MASK			0xFF00
++
++u32 intel_mid_msgbus_read32_raw(u32 cmd);
++u32 intel_mid_msgbus_read32(u8 port, u32 addr);
++void intel_mid_msgbus_write32_raw(u32 cmd, u32 data);
++void intel_mid_msgbus_write32(u8 port, u32 addr, u32 data);
++u32 intel_mid_msgbus_read32_raw_ext(u32 cmd, u32 cmd_ext);
++void intel_mid_msgbus_write32_raw_ext(u32 cmd, u32 cmd_ext, u32 data);
++u32 intel_mid_soc_stepping(void);
+diff --git a/arch/x86/include/asm/intel_mid_powerbtn.h b/arch/x86/include/asm/intel_mid_powerbtn.h
+new file mode 100644
+index 0000000..cd5e4e5
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_powerbtn.h
+@@ -0,0 +1,20 @@
++#ifndef __INTEL_MID_POWERBTN_H__
++#define __INTEL_MID_POWERBTN_H__
++
++struct intel_msic_power_btn_platform_data {
++	u32 pbstat;
++	u16 pb_level;
++	u16 irq_lvl1_mask;
++	int (*irq_ack)(struct intel_msic_power_btn_platform_data *);
++};
++
++#define MSIC_PB_LEN	1
++#define MSIC_PWRBTNM	(1 << 0)
++
++#define BCOVE_PBIRQ		0x02
++#define BCOVE_PBIRQMASK		0x0d
++
++#define SCOVE_PBIRQ		0x1002
++#define SCOVE_PBIRQMASK		0x100d
++
++#endif
+diff --git a/arch/x86/include/asm/intel_mid_pwm.h b/arch/x86/include/asm/intel_mid_pwm.h
+new file mode 100644
+index 0000000..fdd5221
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_pwm.h
+@@ -0,0 +1,30 @@
++#ifndef __INTEL_MID_PWM_H__
++#define __INTEL_MID_PWM_H__
++
++#define MAX_DUTYCYCLE_PERCENTAGE 100
++
++enum {
++	PWM_LED = 0,
++	PWM_VIBRATOR,
++	PWM_LCD_BACKLIGHT,
++	PWM_NUM,
++};
++
++struct intel_mid_pwm_device_data {
++	u16 reg_clkdiv0;
++	u16 reg_clkdiv1;
++	u16 reg_dutycyc;
++	u8 val_clkdiv0;
++	u8 val_clkdiv1;
++};
++
++struct intel_mid_pwm_platform_data {
++	int pwm_num;
++	struct intel_mid_pwm_device_data *ddata;
++	u16 reg_clksel;
++	u8 val_clksel;
++};
++
++int intel_mid_pwm(int id, int value);
++#endif
++
+diff --git a/arch/x86/include/asm/intel_mid_remoteproc.h b/arch/x86/include/asm/intel_mid_remoteproc.h
+new file mode 100644
+index 0000000..6faef10
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_remoteproc.h
+@@ -0,0 +1,118 @@
++/*
++ * INTEL MID Remote Processor Head File
++ *
++ * Copyright (C) 2012 Intel, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef _ASM_INTEL_MID_REMOTEPROC_H
++#define _ASM_INTEL_MID_REMOTEPROC_H
++
++#define RP_IPC_COMMAND		0xA0
++#define RP_IPC_SIMPLE_COMMAND	0xA1
++#define RP_IPC_RAW_COMMAND	0xA2
++
++#define	RP_PMIC_ACCESS		0xFF
++#define	RP_DFU_REQUEST		0xFE
++#define	RP_SET_WATCHDOG		0xF8
++#define	RP_FLIS_ACCESS		0xF5
++#define	RP_GET_FW_REVISION	0xF4
++#define	RP_COLD_BOOT		0xF3
++#define	RP_COLD_RESET		0xF1
++#define	RP_COLD_OFF		0x80
++#define	RP_MIP_ACCESS		0xEC
++#define RP_GET_HOBADDR		0xE5
++#define RP_OSC_CLK_CTRL		0xE6
++#define RP_S0IX_COUNTER		0xE8
++#define RP_WRITE_OSNIB		0xE4
++#define RP_FW_UPDATE		0xFE
++#define RP_VRTC			0xFA
++#define RP_PMDB			0xE0
++#define RP_INDIRECT_WRITE	0x05
++
++/*
++ * Assigning some temp ids for following devices
++ * TODO: Need to change it to some meaningful
++ *       values.
++ */
++#define RP_PMIC_GPIO		0X02
++#define RP_PMIC_AUDIO		0x03
++#define RP_MSIC_GPIO		0x05
++#define RP_MSIC_AUDIO		0x06
++#define RP_MSIC_OCD		0x07
++#define RP_MSIC_BATTERY		0XEF
++#define RP_MSIC_THERMAL		0x09
++#define RP_MSIC_POWER_BTN	0x10
++#define RP_IPC			0X11
++#define RP_IPC_UTIL		0X12
++#define RP_FW_ACCESS		0X13
++#define RP_UMIP_ACCESS		0x14
++#define RP_OSIP_ACCESS		0x15
++#define RP_MSIC_ADC		0x16
++#define RP_BQ24192		0x17
++#define RP_MSIC_CLV_AUDIO	0x18
++#define RP_PMIC_CCSM		0x19
++#define RP_PMIC_I2C		0x20
++#define RP_MSIC_MRFLD_AUDIO	0x21
++#define RP_MSIC_PWM		0x22
++#define RP_MSIC_KPD_LED		0x23
++#define RP_BCOVE_ADC		0x24
++#define RP_BCOVE_THERMAL	0x25
++#define RP_MRFL_OCD		0x26
++#define RP_FW_LOGGING		0x27
++#define RP_PMIC_CHARGER		0x28
++#define RP_SCOVE_THERMAL	0x29
++
++enum rproc_type {
++	RPROC_SCU = 0,
++	RPROC_PSH,
++	RPROC_NUM,
++};
++
++struct rproc_ops;
++struct platform_device;
++struct rpmsg_ns_msg;
++
++struct rpmsg_ns_info {
++	enum rproc_type type;
++	char name[RPMSG_NAME_SIZE];
++	u32 addr;
++	u32 flags;
++	struct list_head node;
++};
++
++struct rpmsg_ns_list {
++	struct list_head list;
++	struct mutex lock;
++};
++
++extern struct rpmsg_ns_info *rpmsg_ns_alloc(const char *name,
++						int id, u32 addr);
++extern void rpmsg_ns_add_to_list(struct rpmsg_ns_info *info,
++					struct rpmsg_ns_list *nslist);
++
++/*
++ * struct intel_mid_rproc_pdata - intel mid remoteproc's platform data
++ * @name: the remoteproc's name
++ * @firmware: name of firmware file to load
++ * @ops: start/stop rproc handlers
++ * @device_enable: handler for enabling a device
++ * @device_shutdown: handler for shutting down a device
++ */
++struct intel_mid_rproc_pdata {
++	const char *name;
++	const char *firmware;
++	const struct rproc_ops *ops;
++	int (*device_enable) (struct platform_device *pdev);
++	int (*device_shutdown) (struct platform_device *pdev);
++	struct rpmsg_ns_list *nslist;
++};
++
++#endif /* _ASM_INTEL_MID_REMOTEPROC_H */
+diff --git a/arch/x86/include/asm/intel_mid_rpmsg.h b/arch/x86/include/asm/intel_mid_rpmsg.h
+new file mode 100644
+index 0000000..7691234
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_rpmsg.h
+@@ -0,0 +1,74 @@
++#ifndef _INTEL_MID_RPMSG_H_
++#define _INTEL_MID_RPMSG_H_
++
++#include <asm/scu_ipc_rpmsg.h>
++#include <linux/wakelock.h>
++#include <linux/rpmsg.h>
++
++#define RPMSG_TX_TIMEOUT   (5 * HZ)
++
++struct rpmsg_instance {
++	struct rpmsg_channel *rpdev;
++	struct mutex instance_lock;
++	struct tx_ipc_msg *tx_msg;
++	struct rx_ipc_msg *rx_msg;
++	struct mutex rx_lock;
++	struct completion reply_arrived;
++	struct rpmsg_endpoint *endpoint;
++};
++
++struct rpmsg_lock {
++	struct mutex lock;
++	int locked_prev; /* locked prev flag */
++	atomic_t pending;
++};
++
++extern int rpmsg_send_command(struct rpmsg_instance *instance, u32 cmd,
++						u32 sub, u8 *in,
++						u32 *out, u32 inlen,
++						u32 outlen);
++
++extern int rpmsg_send_raw_command(struct rpmsg_instance *instance, u32 cmd,
++						u32 sub, u8 *in,
++						u32 *out, u32 inlen,
++						u32 outlen, u32 sptr,
++						u32 dptr);
++
++extern int rpmsg_send_simple_command(struct rpmsg_instance *instance, u32 cmd,
++						u32 sub);
++
++extern int alloc_rpmsg_instance(struct rpmsg_channel *rpdev,
++				struct rpmsg_instance **pInstance);
++
++extern void free_rpmsg_instance(struct rpmsg_channel *rpdev,
++				struct rpmsg_instance **pInstance);
++
++extern void init_rpmsg_instance(struct rpmsg_instance *instance);
++
++extern int rpmsg_send_generic_command(u32 cmd, u32 sub, u8 *in, u32 inlen,
++				u32 *out, u32 outlen);
++
++extern int rpmsg_send_generic_simple_command(u32 cmd, u32 sub);
++
++extern int rpmsg_send_generic_raw_command(u32 cmd, u32 sub,
++				   u8 *in, u32 inlen,
++				   u32 *out, u32 outlen,
++				   u32 dptr, u32 sptr);
++
++struct rpmsg_device_data {
++	char name[RPMSG_NAME_SIZE];
++	struct rpmsg_channel *rpdev;
++	struct rpmsg_instance *rpmsg_instance;
++};
++
++enum rpmsg_ipc_command_type {
++	RPMSG_IPC_COMMAND = 0,
++	RPMSG_IPC_SIMPLE_COMMAND,
++	RPMSG_IPC_RAW_COMMAND,
++	RPMSG_IPC_COMMAND_TYPE_NUM,
++};
++
++extern void rpmsg_global_lock(void);
++extern void rpmsg_global_unlock(void);
++
++#endif
+diff --git a/arch/x86/include/asm/intel_mid_thermal.h b/arch/x86/include/asm/intel_mid_thermal.h
+new file mode 100644
+index 0000000..56b9a7f
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mid_thermal.h
+@@ -0,0 +1,79 @@
++#ifndef __INTEL_MID_THERMAL_H__
++#define __INTEL_MID_THERMAL_H__
++
++#include <linux/thermal.h>
++
++#define BPTHERM_NAME	"bptherm"
++#define SKIN0_NAME	"skin0"
++#define SKIN1_NAME	"skin1"
++#define MSIC_DIE_NAME	"msicdie"
++#define MSIC_SYS_NAME	"sys"
++#define SYSTHERM0       "systherm0"
++#define SYSTHERM1       "systherm1"
++#define SYSTHERM2       "systherm2"
++/**
++ * struct intel_mid_thermal_sensor - intel_mid_thermal sensor information
++ * @name:		name of the sensor
++ * @index:		index number of sensor
++ * @slope:		slope used for temp calculation
++ * @intercept:		intercept used for temp calculation
++ * @adc_channel:	adc channel id|flags
++ * @direct:		If true then direct conversion is used.
++ * @priv:		private sensor data
++ * @temp_correlation:	temp correlation function
++ */
++struct intel_mid_thermal_sensor {
++	char name[THERMAL_NAME_LENGTH];
++	int index;
++	long slope;
++	long intercept;
++	int adc_channel;
++	bool direct;
++	void *priv;
++	int (*temp_correlation)(void *info, long temp, long *res);
++};
++
++/**
++ * struct soc_throttle_data - SoC level power limits for thermal throttling
++ * @power_limit:	power limit value
++ * @floor_freq:		The CPU frequency may not go below this value
++ */
++struct soc_throttle_data {
++	int power_limit;
++	int floor_freq;
++};
++
++/**
++ * struct intel_mid_thermal_platform_data - Platform data for
++ *		intel mid thermal driver
++ *
++ * @num_sensors:	Maximum number of sensors supported
++ * @sensors:		sensor info
++ * @gpu_cooling:	Whether to register a cdev for GPU throttling
++ */
++struct intel_mid_thermal_platform_data {
++	int num_sensors;
++	struct intel_mid_thermal_sensor *sensors;
++	bool gpu_cooling;
++};
++
++/**
++ * struct skin1_private_info - skin1 sensor private data
++ *
++ * @dependent:		dependency on other sensors
++			0   - no dependency,
++			> 0 - depends on other sensors
++ * @sensors:		dependent sensor address.
++ */
++struct skin1_private_info {
++	int dependent;
++	struct intel_mid_thermal_sensor **sensors;
++};
++
++/* skin0 sensor temperature correlation function*/
++int skin0_temp_correlation(void *info, long temp, long *res);
++/* skin1 sensor temperature correlation function*/
++int skin1_temp_correlation(void *info, long temp, long *res);
++/* bptherm sensor temperature correlation function*/
++int bptherm_temp_correlation(void *info, long temp, long *res);
++#endif
+diff --git a/arch/x86/include/asm/intel_mid_vrtc.h b/arch/x86/include/asm/intel_mid_vrtc.h
+index 86ff468..11ababf 100644
+--- a/arch/x86/include/asm/intel_mid_vrtc.h
++++ b/arch/x86/include/asm/intel_mid_vrtc.h
+@@ -3,7 +3,7 @@
+ 
+ extern unsigned char vrtc_cmos_read(unsigned char reg);
+ extern void vrtc_cmos_write(unsigned char val, unsigned char reg);
+-extern void vrtc_get_time(struct timespec *now);
+-extern int vrtc_set_mmss(const struct timespec *now);
++extern unsigned long vrtc_get_time(void);
++extern int vrtc_set_mmss(unsigned long nowtime);
+ 
+ #endif
+diff --git a/arch/x86/include/asm/intel_mip.h b/arch/x86/include/asm/intel_mip.h
+new file mode 100644
+index 0000000..f05fc05
+--- /dev/null
++++ b/arch/x86/include/asm/intel_mip.h
+@@ -0,0 +1,32 @@
++#ifndef _ASM_X86_INTEL_MIP_H_
++#define  _ASM_X86_INTEL_MIP_H_
++
++#include <asm/intel-mid.h>
++
++/* SMIP property related definitions */
++#define SCU_MIP_DEV_NAME		"intel_scu_mip"
++#define SMIP_NUM_CONFIG_PROPS		6
++#define SMIP_MAX_PROP_LEN		4
++
++enum platform_prop {
++	USB_COMPLIANCE,
++	CHARGE_TERMINATION,
++	SHUTDOWN_METHODOLOGY,
++	MOS_TRANS_CAPACITY,
++	NFC_RESV_CAPACITY,
++	TEMP_CRIT_SHUTDOWN,
++};
++
++struct smip_platform_prop {
++	unsigned int offset;
++	unsigned int len;
++	bool is_bit_field;
++	unsigned int mask;
++};
++
++struct scu_mip_platform_data {
++	struct smip_platform_prop smip_prop[SMIP_NUM_CONFIG_PROPS];
++};
++
++int get_smip_property_by_name(enum platform_prop);
++#endif
+diff --git a/arch/x86/include/asm/intel_psh_ipc.h b/arch/x86/include/asm/intel_psh_ipc.h
+new file mode 100644
+index 0000000..ed4d3c1
+--- /dev/null
++++ b/arch/x86/include/asm/intel_psh_ipc.h
+@@ -0,0 +1,35 @@
++#ifndef _ASM_X86_INTEL_PSH_IPC_H_
++#define _ASM_X86_INTEL_PSH_IPC_H_
++
++#define CHANNEL_BUSY		(1 << 31)
++#define PSH_IPC_CONTINUE	(1 << 30)
++
++struct psh_msg {
++	u32 msg;
++	u32 param;
++};
++
++enum psh_channel {
++	PSH_SEND_CH0 = 0,
++	PSH_SEND_CH1,
++	PSH_SEND_CH2,
++	PSH_SEND_CH3,
++	NUM_IA2PSH_IPC,
++	PSH_RECV_CH0 = NUM_IA2PSH_IPC,
++	PSH_RECV_CH1,
++	PSH_RECV_CH2,
++	PSH_RECV_CH3,
++	PSH_RECV_END,
++	NUM_PSH2IA_IPC = PSH_RECV_END - PSH_RECV_CH0,
++	NUM_ALL_CH = NUM_IA2PSH_IPC + NUM_PSH2IA_IPC,
++};
++
++typedef void(*psh_channel_handle_t)(u32 msg, u32 param, void *data);
++int intel_ia2psh_command(struct psh_msg *in, struct psh_msg *out,
++			 int ch, int timeout);
++int intel_psh_ipc_bind(int ch, psh_channel_handle_t handle, void *data);
++void intel_psh_ipc_unbind(int ch);
++
++void intel_psh_ipc_disable_irq(void);
++void intel_psh_ipc_enable_irq(void);
++#endif
+diff --git a/arch/x86/include/asm/intel_scu_flis.h b/arch/x86/include/asm/intel_scu_flis.h
+new file mode 100644
+index 0000000..e782a8c
+--- /dev/null
++++ b/arch/x86/include/asm/intel_scu_flis.h
+@@ -0,0 +1,588 @@
++#ifndef _ASM_X86_INTEL_SCU_FLIS_H_
++#define _ASM_X86_INTEL_SCU_FLIS_H_
++
++enum flis_param_t {
++	PULL,
++	MUX,
++	OPEN_DRAIN,
++};
++
++#ifndef CONFIG_X86_MRFLD
++/* For CTP */
++/*
++ * Config value for PULL
++ */
++#define NONE		(0 << 0)
++#define DOWN_20K	(1 << 0)
++#define DOWN_2K		(1 << 1)
++/* DOWN_75K is reserved */
++#define UP_20K		(1 << 3)
++#define UP_2K		(1 << 4)
++/*910 Weak Pull-Up*/
++#define UP_910		(1 << 5)
++
++/*
++ * Config value for OPEN_DRAIN
++ */
++#define OD_DISABLE	(1 << 0)
++#define OD_ENABLE	(0 << 0)
++
++/*
++ * Config value for MUX
++ */
++/*Bit0: Mux Enable for Input Enable*/
++#define MUX_EN_INPUT_EN		(1<<0)
++/*Bit1: Input Enable for*/
++#define INPUT_EN		(1<<1)
++/*Bit2: Mux Enable for Output Enable*/
++#define MUX_EN_OUTPUT_EN	(1<<2)
++/*Bit3: Output Enable*/
++#define OUTPUT_EN		(1<<3)
++
++#define PULL_MASK		0x3F
++#define MUX_MASK		0xF
++#define OPEN_DRAIN_MASK		0x1
++
++#else
++/* For MERR */
++
++#define PULL_MASK	((7 << 4) | (3 << 8))
++#define MUX_MASK	(0xF << 12)
++#define OPEN_DRAIN_MASK	BIT(21)
++
++#define PULL_UP		(1 << 8)
++#define PULL_DOWN	(2 << 8)
++#define R2Kohms		(0 << 4)
++#define R20Kohms	(1 << 4)
++#define R50Kohms	(2 << 4)
++#define R910ohms	(3 << 4)
++
++#define UP_2K		(PULL_UP | R2Kohms)
++#define UP_20K		(PULL_UP | R20Kohms)
++#define UP_50K		(PULL_UP | R50Kohms)
++#define UP_910		(PULL_UP | R910ohms)
++#define DOWN_2K		(PULL_DOWN | R2Kohms)
++#define DOWN_20K	(PULL_DOWN | R20Kohms)
++#define DOWN_50K	(PULL_DOWN | R50Kohms)
++#define DOWN_910	(PULL_DOWN | R910ohms)
++
++#define OD_DISABLE	(0 << 21)
++#define OD_ENABLE	(1 << 21)
++
++#define MUX_EN_INPUT_EN		(2 << 12)
++#define INPUT_EN		(1 << 12)
++#define MUX_EN_OUTPUT_EN	(8 << 12)
++#define OUTPUT_EN		(4 << 12)
++
++#endif
++
++enum ctp_pinname_t {
++	i2s_2_clk = 0,
++	i2s_2_fs = 1,
++	i2s_2_rxd = 2,
++	i2s_2_txd = 3,
++	msic_reset_b = 4,
++	spi_0_clk = 5,
++	spi_0_sdi = 6,
++	spi_0_sdo = 7,
++	spi_0_ss = 8,
++	svid_clkout = 9,
++	svid_clksynch = 10,
++	svid_din = 11,
++	svid_dout = 12,
++	usb_ulpi_clk = 13,
++	usb_ulpi_data0 = 14,
++	usb_ulpi_data1 = 15,
++	usb_ulpi_data2 = 16,
++	usb_ulpi_data3 = 17,
++	usb_ulpi_data4 = 18,
++	usb_ulpi_data5 = 19,
++	usb_ulpi_data6 = 20,
++	usb_ulpi_data7 = 21,
++	usb_ulpi_dir = 22,
++	usb_ulpi_nxt = 23,
++	usb_ulpi_refclk = 24,
++	usb_ulpi_stp = 25,
++	ulpi1lpc_gpe_b = 26,
++	ulpi1lpc_lpc_ad0 = 27,
++	ulpi1lpc_lpc_ad1 = 28,
++	ulpi1lpc_lpc_ad2 = 29,
++	ulpi1lpc_lpc_ad3 = 30,
++	ulpi1lpc_lpc_clkout = 31,
++	ulpi1lpc_lpc_clkrun = 32,
++	ulpi1lpc_lpc_frame_b = 33,
++	ulpi1lpc_lpc_reset_b = 34,
++	ulpi1lpc_lpc_serirq = 35,
++	ulpi1lpc_lpc_smi_b = 36,
++	ulpi1lpc_usb_ulpi_1_clk = 37,
++	ulpi1lpc_usb_ulpi_1_data0 = 38,
++	ulpi1lpc_usb_ulpi_1_data1 = 39,
++	ulpi1lpc_usb_ulpi_1_data2 = 40,
++	ulpi1lpc_usb_ulpi_1_data3 = 41,
++	ulpi1lpc_usb_ulpi_1_data4 = 42,
++	ulpi1lpc_usb_ulpi_1_data5 = 43,
++	ulpi1lpc_usb_ulpi_1_data6 = 44,
++	ulpi1lpc_usb_ulpi_1_data7 = 45,
++	ulpi1lpc_usb_ulpi_1_dir = 46,
++	ulpi1lpc_usb_ulpi_1_nxt = 47,
++	ulpi1lpc_usb_ulpi_1_refclk = 48,
++	ulpi1lpc_usb_ulpi_1_stp = 49,
++	kbd_dkin0 = 50,
++	kbd_dkin1 = 51,
++	kbd_dkin2 = 52,
++	kbd_dkin3 = 53,
++	kbd_mkin0 = 54,
++	kbd_mkin1 = 55,
++	kbd_mkin2 = 56,
++	kbd_mkin3 = 57,
++	kbd_mkin4 = 58,
++	kbd_mkin5 = 59,
++	kbd_mkin6 = 60,
++	kbd_mkin7 = 61,
++	kbd_mkout0 = 62,
++	kbd_mkout1 = 63,
++	kbd_mkout2 = 64,
++	kbd_mkout3 = 65,
++	kbd_mkout4 = 66,
++	kbd_mkout5 = 67,
++	kbd_mkout6 = 68,
++	kbd_mkout7 = 69,
++	camerasb10 = 70,
++	camerasb4 = 71,
++	camerasb5 = 72,
++	camerasb6 = 73,
++	camerasb7 = 74,
++	camerasb8 = 75,
++	camerasb9 = 76,
++	i2c_4_scl = 77,
++	i2c_4_sda = 78,
++	i2c_5_scl = 79,
++	i2c_5_sda = 80,
++	intd_dsi_te1 = 81,
++	intd_dsi_te2 = 82,
++	stio_0_cd_b = 83,
++	stio_0_clk = 84,
++	stio_0_cmd = 85,
++	stio_0_dat0 = 86,
++	stio_0_dat1 = 87,
++	stio_0_dat2 = 88,
++	stio_0_dat3 = 89,
++	stio_0_dat4 = 90,
++	stio_0_dat5 = 91,
++	stio_0_dat6 = 92,
++	stio_0_dat7 = 93,
++	stio_0_wp_b = 94,
++	camerasb0 = 95,
++	camerasb1 = 96,
++	camerasb2 = 97,
++	camerasb3 = 98,
++	ded_gpio10 = 99,
++	ded_gpio11 = 100,
++	ded_gpio12 = 101,
++	ded_gpio13 = 102,
++	ded_gpio14 = 103,
++	ded_gpio15 = 104,
++	ded_gpio16 = 105,
++	ded_gpio17 = 106,
++	ded_gpio18 = 107,
++	ded_gpio19 = 108,
++	ded_gpio20 = 109,
++	ded_gpio21 = 110,
++	ded_gpio22 = 111,
++	ded_gpio23 = 112,
++	ded_gpio24 = 113,
++	ded_gpio25 = 114,
++	ded_gpio26 = 115,
++	ded_gpio27 = 116,
++	ded_gpio28 = 117,
++	ded_gpio29 = 118,
++	ded_gpio30 = 119,
++	ded_gpio8 = 120,
++	ded_gpio9 = 121,
++	mpti_nidnt_clk = 122,
++	mpti_nidnt_data0 = 123,
++	mpti_nidnt_data1 = 124,
++	mpti_nidnt_data2 = 125,
++	mpti_nidnt_data3 = 126,
++	stio_1_clk = 127,
++	stio_1_cmd = 128,
++	stio_1_dat0 = 129,
++	stio_1_dat1 = 130,
++	stio_1_dat2 = 131,
++	stio_1_dat3 = 132,
++	stio_2_clk = 133,
++	stio_2_cmd = 134,
++	stio_2_dat0 = 135,
++	stio_2_dat1 = 136,
++	stio_2_dat2 = 137,
++	stio_2_dat3 = 138,
++	coms_int0 = 139,
++	coms_int1 = 140,
++	coms_int2 = 141,
++	coms_int3 = 142,
++	ded_gpio4 = 143,
++	ded_gpio5 = 144,
++	ded_gpio6 = 145,
++	ded_gpio7 = 146,
++	i2s_0_clk = 147,
++	i2s_0_fs = 148,
++	i2s_0_rxd = 149,
++	i2s_0_txd = 150,
++	i2s_1_clk = 151,
++	i2s_1_fs = 152,
++	i2s_1_rxd = 153,
++	i2s_1_txd = 154,
++	mslim_1_bclk = 155,
++	mslim_1_bdat = 156,
++	resetout_b = 157,
++	spi_2_clk = 158,
++	spi_2_sdi = 159,
++	spi_2_sdo = 160,
++	spi_2_ss0 = 161,
++	spi_2_ss1 = 162,
++	spi_3_clk = 163,
++	spi_3_sdi = 164,
++	spi_3_sdo = 165,
++	spi_3_ss0 = 166,
++	spi_3_ss1 = 167,
++	uart_0_cts = 168,
++	uart_0_rts = 169,
++	uart_0_rx = 170,
++	uart_0_tx = 171,
++	uart_1_rx = 172,
++	uart_1_sd = 173,
++	uart_1_tx = 174,
++	uart_2_rx = 175,
++	uart_2_tx = 176,
++	aclkph = 177,
++	dclkph = 178,
++	dsiclkph = 179,
++	ierr = 180,
++	jtag_tckc = 181,
++	jtag_tdic = 182,
++	jtag_tdoc = 183,
++	jtag_tmsc = 184,
++	jtag_trst_b = 185,
++	lclkph = 186,
++	lfhclkph = 187,
++	osc_clk_ctrl0 = 188,
++	osc_clk_ctrl1 = 189,
++	osc_clk_out0 = 190,
++	osc_clk_out1 = 191,
++	osc_clk_out2 = 192,
++	osc_clk_out3 = 193,
++	prochot_b = 194,
++	thermtrip_b = 195,
++	uclkph = 196,
++	ded_gpio31 = 197,
++	ded_gpio32 = 198,
++	ded_gpio33 = 199,
++	hdmi_cec = 200,
++	i2c_3_scl_hdmi_ddc = 201,
++	i2c_3_sda_hdmi_ddc = 202,
++	i2c_0_scl = 203,
++	i2c_0_sda = 204,
++	i2c_1_scl = 205,
++	i2c_1_sda = 206,
++	i2c_2_scl = 207,
++	i2c_2_sda = 208,
++	spi_1_clk = 209,
++	spi_1_sdi = 210,
++	spi_1_sdo = 211,
++	spi_1_ss0 = 212,
++	spi_1_ss1 = 213,
++	spi_1_ss2 = 214,
++	spi_1_ss3 = 215,
++	spi_1_ss4 = 216,
++	CTP_PIN_NUM,
++};
++
++/* Add prefix "tng_" to avoid name duplication with ctp pins */
++enum tng_pinname_t {
++	tng_usb_ulpi_0_clk = 0,
++	tng_usb_ulpi_0_data_0 = 1,
++	tng_usb_ulpi_0_data_1 = 2,
++	tng_usb_ulpi_0_data_2 = 3,
++	tng_usb_ulpi_0_data_3 = 4,
++	tng_usb_ulpi_0_data_4 = 5,
++	tng_usb_ulpi_0_data_5 = 6,
++	tng_usb_ulpi_0_data_6 = 7,
++	tng_usb_ulpi_0_data_7 = 8,
++	tng_usb_ulpi_0_dir = 9,
++	tng_usb_ulpi_0_nxt = 10,
++	tng_usb_ulpi_0_refclk = 11,
++	tng_usb_ulpi_0_stp = 12,
++	tng_emmc_0_clk = 13,
++	tng_emmc_0_cmd = 14,
++	tng_emmc_0_d_0 = 15,
++	tng_emmc_0_d_1 = 16,
++	tng_emmc_0_d_2 = 17,
++	tng_emmc_0_d_3 = 18,
++	tng_emmc_0_d_4 = 19,
++	tng_emmc_0_d_5 = 20,
++	tng_emmc_0_d_6 = 21,
++	tng_emmc_0_d_7 = 22,
++	tng_emmc_0_rst_b = 23,
++	tng_gp_emmc_1_clk = 24,
++	tng_gp_emmc_1_cmd = 25,
++	tng_gp_emmc_1_d_0 = 26,
++	tng_gp_emmc_1_d_1 = 27,
++	tng_gp_emmc_1_d_2 = 28,
++	tng_gp_emmc_1_d_3 = 29,
++	tng_gp_emmc_1_d_4 = 30,
++	tng_gp_emmc_1_d_5 = 31,
++	tng_gp_emmc_1_d_6 = 32,
++	tng_gp_emmc_1_d_7 = 33,
++	tng_gp_emmc_1_rst_b = 34,
++	tng_gp_28 = 35,
++	tng_gp_29 = 36,
++	tng_gp_sdio_0_cd_b = 37,
++	tng_gp_sdio_0_clk = 38,
++	tng_gp_sdio_0_cmd = 39,
++	tng_gp_sdio_0_dat_0 = 40,
++	tng_gp_sdio_0_dat_1 = 41,
++	tng_gp_sdio_0_dat_2 = 42,
++	tng_gp_sdio_0_dat_3 = 43,
++	tng_gp_sdio_0_lvl_clk_fb = 44,
++	tng_gp_sdio_0_lvl_cmd_dir = 45,
++	tng_gp_sdio_0_lvl_dat_dir = 46,
++	tng_gp_sdio_0_lvl_sel = 47,
++	tng_gp_sdio_0_powerdown_b = 48,
++	tng_gp_sdio_0_wp = 49,
++	tng_gp_sdio_1_clk = 50,
++	tng_gp_sdio_1_cmd = 51,
++	tng_gp_sdio_1_dat_0 = 52,
++	tng_gp_sdio_1_dat_1 = 53,
++	tng_gp_sdio_1_dat_2 = 54,
++	tng_gp_sdio_1_dat_3 = 55,
++	tng_gp_sdio_1_powerdown_b = 56,
++	tng_mhsi_acdata = 57,
++	tng_mhsi_acflag = 58,
++	tng_mhsi_acready = 59,
++	tng_mhsi_acwake = 60,
++	tng_mhsi_cadata = 61,
++	tng_mhsi_caflag = 62,
++	tng_mhsi_caready = 63,
++	tng_mhsi_cawake = 64,
++	tng_gp_mslim_0_bclk = 65,
++	tng_gp_mslim_0_bdat = 66,
++	tng_gp_ssp_0_clk = 67,
++	tng_gp_ssp_0_fs = 68,
++	tng_gp_ssp_0_rxd = 69,
++	tng_gp_ssp_0_txd = 70,
++	tng_gp_ssp_1_clk = 71,
++	tng_gp_ssp_1_fs = 72,
++	tng_gp_ssp_1_rxd = 73,
++	tng_gp_ssp_1_txd = 74,
++	tng_gp_ssp_2_clk = 75,
++	tng_gp_ssp_2_fs = 76,
++	tng_gp_ssp_2_rxd = 77,
++	tng_gp_ssp_2_txd = 78,
++	tng_gp_ssp_3_clk = 79,
++	tng_gp_ssp_3_fs = 80,
++	tng_gp_ssp_3_rxd = 81,
++	tng_gp_ssp_3_txd = 82,
++	tng_gp_ssp_4_clk = 83,
++	tng_gp_ssp_4_fs_0 = 84,
++	tng_gp_ssp_4_fs_1 = 85,
++	tng_gp_ssp_4_fs_2 = 86,
++	tng_gp_ssp_4_fs_3 = 87,
++	tng_gp_ssp_4_rxd = 88,
++	tng_gp_ssp_4_txd = 89,
++	tng_gp_ssp_5_clk = 90,
++	tng_gp_ssp_5_fs_0 = 91,
++	tng_gp_ssp_5_fs_1 = 92,
++	tng_gp_ssp_5_fs_2 = 93,
++	tng_gp_ssp_5_fs_3 = 94,
++	tng_gp_ssp_5_rxd = 95,
++	tng_gp_ssp_5_txd = 96,
++	tng_gp_ssp_6_clk = 97,
++	tng_gp_ssp_6_fs = 98,
++	tng_gp_ssp_6_rxd = 99,
++	tng_gp_ssp_6_txd = 100,
++	tng_gp_i2c_1_scl = 101,
++	tng_gp_i2c_1_sda = 102,
++	tng_gp_i2c_2_scl = 103,
++	tng_gp_i2c_2_sda = 104,
++	tng_gp_i2c_3_scl = 105,
++	tng_gp_i2c_3_sda = 106,
++	tng_gp_i2c_4_scl = 107,
++	tng_gp_i2c_4_sda = 108,
++	tng_gp_i2c_5_scl = 109,
++	tng_gp_i2c_5_sda = 110,
++	tng_gp_i2c_6_scl = 111,
++	tng_gp_i2c_6_sda = 112,
++	tng_gp_i2c_7_scl = 113,
++	tng_gp_i2c_7_sda = 114,
++	tng_gp_uart_0_cts = 115,
++	tng_gp_uart_0_rts = 116,
++	tng_gp_uart_0_rx = 117,
++	tng_gp_uart_0_tx = 118,
++	tng_gp_uart_1_cts = 119,
++	tng_gp_uart_1_rts = 120,
++	tng_gp_uart_1_rx = 121,
++	tng_gp_uart_1_tx = 122,
++	tng_gp_uart_2_cts = 123,
++	tng_gp_uart_2_rts = 124,
++	tng_gp_uart_2_rx = 125,
++	tng_gp_uart_2_tx = 126,
++	tng_gp_13 = 127,
++	tng_gp_14 = 128,
++	tng_gp_15 = 129,
++	tng_gp_16 = 130,
++	tng_gp_17 = 131,
++	tng_gp_18 = 132,
++	tng_gp_19 = 133,
++	tng_gp_20 = 134,
++	tng_gp_21 = 135,
++	tng_gp_22 = 136,
++	tng_gp_23 = 137,
++	tng_gp_24 = 138,
++	tng_gp_25 = 139,
++	tng_gp_fast_int_0 = 140,
++	tng_gp_fast_int_1 = 141,
++	tng_gp_fast_int_2 = 142,
++	tng_gp_fast_int_3 = 143,
++	tng_gp_pwm_0 = 144,
++	tng_gp_pwm_1 = 145,
++	tng_gp_camerasb_0 = 146,
++	tng_gp_camerasb_1 = 147,
++	tng_gp_camerasb_2 = 148,
++	tng_gp_camerasb_3 = 149,
++	tng_gp_camerasb_4 = 150,
++	tng_gp_camerasb_5 = 151,
++	tng_gp_camerasb_6 = 152,
++	tng_gp_camerasb_7 = 153,
++	tng_gp_camerasb_8 = 154,
++	tng_gp_camerasb_9 = 155,
++	tng_gp_camerasb_10 = 156,
++	tng_gp_camerasb_11 = 157,
++	tng_gp_clkph_0 = 158,
++	tng_gp_clkph_1 = 159,
++	tng_gp_clkph_2 = 160,
++	tng_gp_clkph_3 = 161,
++	tng_gp_clkph_4 = 162,
++	tng_gp_clkph_5 = 163,
++	tng_gp_hdmi_hpd = 164,
++	tng_gp_intd_dsi_te1 = 165,
++	tng_gp_intd_dsi_te2 = 166,
++	tng_osc_clk_ctrl_0 = 167,
++	tng_osc_clk_ctrl_1 = 168,
++	tng_osc_clk_out_0 = 169,
++	tng_osc_clk_out_1 = 170,
++	tng_osc_clk_out_2 = 171,
++	tng_osc_clk_out_3 = 172,
++	tng_osc_clk_out_4 = 173,
++	tng_resetout_b = 174,
++	tng_xxpmode = 175,
++	tng_xxprdy = 176,
++	tng_xxpreq_b = 177,
++	tng_gp_26 = 178,
++	tng_gp_27 = 179,
++	tng_i2c_0_scl = 180,
++	tng_i2c_0_sda = 181,
++	tng_ierr_b = 182,
++	tng_jtag_tckc = 183,
++	tng_jtag_tdic = 184,
++	tng_jtag_tdoc = 185,
++	tng_jtag_tmsc = 186,
++	tng_jtag_trst_b = 187,
++	tng_prochot_b = 188,
++	tng_rtc_clk = 189,
++	tng_svid_vclk = 190,
++	tng_svid_vdio = 191,
++	tng_thermtrip_b = 192,
++	tng_standby = 193,
++	tng_gp_kbd_dkin_0 = 194,
++	tng_gp_kbd_dkin_1 = 195,
++	tng_gp_kbd_dkin_2 = 196,
++	tng_gp_kbd_dkin_3 = 197,
++	tng_gp_kbd_mkin_0 = 198,
++	tng_gp_kbd_mkin_1 = 199,
++	tng_gp_kbd_mkin_2 = 200,
++	tng_gp_kbd_mkin_3 = 201,
++	tng_gp_kbd_mkin_4 = 202,
++	tng_gp_kbd_mkin_5 = 203,
++	tng_gp_kbd_mkin_6 = 204,
++	tng_gp_kbd_mkin_7 = 205,
++	tng_gp_kbd_mkout_0 = 206,
++	tng_gp_kbd_mkout_1 = 207,
++	tng_gp_kbd_mkout_2 = 208,
++	tng_gp_kbd_mkout_3 = 209,
++	tng_gp_kbd_mkout_4 = 210,
++	tng_gp_kbd_mkout_5 = 211,
++	tng_gp_kbd_mkout_6 = 212,
++	tng_gp_kbd_mkout_7 = 213,
++	tng_gp_0 = 214,
++	tng_gp_1 = 215,
++	tng_gp_2 = 216,
++	tng_gp_3 = 217,
++	tng_gp_4 = 218,
++	tng_gp_5 = 219,
++	tng_gp_6 = 220,
++	tng_gp_7 = 221,
++	tng_gp_8 = 222,
++	tng_gp_9 = 223,
++	tng_gp_10 = 224,
++	tng_gp_11 = 225,
++	tng_gp_12 = 226,
++	tng_gp_mpti_clk = 227,
++	tng_gp_mpti_data_0 = 228,
++	tng_gp_mpti_data_1 = 229,
++	tng_gp_mpti_data_2 = 230,
++	tng_gp_mpti_data_3 = 231,
++	TNG_PIN_NUM,
++};
++
++struct pinstruct_t {
++	bool valid;	/* the pin is allowed to be configured or not */
++	u8 bus_address;
++	u8 pullup_offset;
++	u8 pullup_lsb_pos;
++	u8 direction_offset;
++	u8 direction_lsb_pos;
++	u8 open_drain_offset;
++	u8 open_drain_bit;
++};
++
++enum ACCESS_CTRL {
++	readonly = (1 << 0),
++	writable = (1 << 1),
++};
++
++struct pin_mmio_flis_t {
++	u8 access_ctrl; /* mmio flis access control */
++	u32 offset;	/* pin offset from flis base address */
++};
++
++struct intel_scu_flis_platform_data {
++	struct pinstruct_t *pin_t;
++	int pin_num;
++	u32 flis_base;
++	u32 flis_len;
++	struct pin_mmio_flis_t *mmio_flis_t;
++	bool shim_access;
++};
++
++#define OPS_STR_LEN 10
++
++enum {
++	DBG_SHIM_FLIS_ADDR,
++	DBG_SHIM_OFFSET,
++	DBG_SHIM_DATA,
++
++	DBG_PARAM_VAL,
++	DBG_PARAM_TYPE,
++	DBG_PIN_NAME,
++};
++
++int intel_scu_ipc_write_shim(u32 data, u32 flis_addr, u32 offset);
++int intel_scu_ipc_read_shim(u32 *data, u32 flis_addr, u32 offset);
++int intel_scu_ipc_update_shim(u32 data, u32 mask, u32 flis_addr, u32 offset);
++int config_pin_flis(unsigned int name, enum flis_param_t param, u32 val);
++int get_pin_flis(unsigned int name, enum flis_param_t param, u32 *val);
++u32 get_flis_value(u32 offset);
++void set_flis_value(u32 value, u32 offset);
++
++extern struct pinstruct_t ctp_pin_table[];
++#endif
+diff --git a/arch/x86/include/asm/intel_scu_ipc.h b/arch/x86/include/asm/intel_scu_ipc.h
+index 925b605..b2363a9 100644
+--- a/arch/x86/include/asm/intel_scu_ipc.h
++++ b/arch/x86/include/asm/intel_scu_ipc.h
+@@ -2,53 +2,114 @@
+ #define  _ASM_X86_INTEL_SCU_IPC_H_
+ 
+ #include <linux/notifier.h>
++#include <asm/intel-mid.h>
+ 
++/* IPC defines the following message types */
++#define IPCMSG_GET_HOBADDR	0xE5 /* OSHOB access. */
++#define IPCMSG_BATTERY          0xEF /* Coulomb Counter Accumulator */
++#define IPCMSG_MIP_ACCESS       0xEC /* IA MIP access */
++#define IPCMSG_PMDB_CMD		0xE0
+ #define IPCMSG_WARM_RESET	0xF0
+ #define IPCMSG_COLD_RESET	0xF1
+ #define IPCMSG_SOFT_RESET	0xF2
+ #define IPCMSG_COLD_BOOT	0xF3
+-
++#define IPCMSG_COLD_OFF		0x80 /* for TNG only */
++#define IPCMSG_FW_REVISION      0xF4 /* Get firmware revision */
++#define IPCMSG_SHIM_CONFIG	0xF5 /* Configure SHIM */
++#define IPCMSG_WATCHDOG_TIMER   0xF8 /* Set Kernel Watchdog Threshold */
+ #define IPCMSG_VRTC		0xFA	 /* Set vRTC device */
+-	/* Command id associated with message IPCMSG_VRTC */
+-	#define IPC_CMD_VRTC_SETTIME      1 /* Set time */
+-	#define IPC_CMD_VRTC_SETALARM     2 /* Set alarm */
+-
+-/* Read single register */
+-int intel_scu_ipc_ioread8(u16 addr, u8 *data);
+-
+-/* Read two sequential registers */
+-int intel_scu_ipc_ioread16(u16 addr, u16 *data);
+-
+-/* Read four sequential registers */
+-int intel_scu_ipc_ioread32(u16 addr, u32 *data);
+-
+-/* Read a vector */
+-int intel_scu_ipc_readv(u16 *addr, u8 *data, int len);
+-
+-/* Write single register */
+-int intel_scu_ipc_iowrite8(u16 addr, u8 data);
+-
+-/* Write two sequential registers */
+-int intel_scu_ipc_iowrite16(u16 addr, u16 data);
+-
+-/* Write four sequential registers */
+-int intel_scu_ipc_iowrite32(u16 addr, u32 data);
+-
+-/* Write a vector */
+-int intel_scu_ipc_writev(u16 *addr, u8 *data, int len);
++#define IPCMSG_FW_UPDATE        0xFE /* Firmware update */
++#define IPCMSG_PCNTRL           0xFF /* Power controller unit read/write */
++#define IPCMSG_OSC_CLK		0xE6 /* Turn on/off osc clock */
++#define IPCMSG_S0IX_COUNTER	0xEB /* Get S0ix residency */
++#define IPCMSG_CLEAR_FABERROR	0xE3 /* Clear fabric error log */
++#define IPCMSG_SCULOG_CTRL	0xE1 /* SCU logging control message */
++#define IPCMSG_STORE_NV_DATA	0xCD /* Store the Non Volatile data to RAM */
++
++#define IPCMSG_SCULOG_TRACE	0x90 /* SCU trace logging message */
++
++#define IPC_CMD_SCU_LOG_DISABLE 0x00
++#define IPC_CMD_SCU_LOG_ENABLE	0x01
++#define IPC_CMD_SCU_LOG_DUMP	0x02
++#define IPC_CMD_SCU_LOG_DIS_RB	0x03
++#define IPC_CMD_SCU_LOG_EN_RB	0x04
++#define IPC_CMD_SCU_LOG_ADDR	0x05
++#define IPC_CMD_SCU_LOG_IATRACE	0x06
++#define IPC_CMD_SCU_EN_STATUS	0x07
++
++#define IPC_CMD_UMIP_RD     0
++#define IPC_CMD_UMIP_WR     1
++#define IPC_CMD_SMIP_RD     2
++
++/* Command id associated with message IPCMSG_PCNTRL */
++#define IPC_CMD_PCNTRL_W      0 /* Register write */
++#define IPC_CMD_PCNTRL_R      1 /* Register read */
++#define IPC_CMD_PCNTRL_M      2 /* Register read-modify-write */
++
++#define IPC_ERR_NONE			0
++#define IPC_ERR_CMD_NOT_SUPPORTED	1
++#define IPC_ERR_CMD_NOT_SERVICED	2
++#define IPC_ERR_UNABLE_TO_SERVICE	3
++#define IPC_ERR_CMD_INVALID		4
++#define IPC_ERR_CMD_FAILED		5
++#define IPC_ERR_EMSECURITY		6
++#define IPC_ERR_UNSIGNEDKERNEL		7
++
++#define MSIC_DEBUG_FILE "msic"
++#define MSIC_ALL_DEBUG_FILE "msic_all"
++#define MAX_MSIC_REG   0x3FF
++#define MIN_MSIC_REG   0x0
++
++/* Command id associated with SCULOG_CTRL */
++#define IPC_CMD_SCU_LOG_SUSPEND	1
++#define IPC_CMD_SCU_LOG_RESUME	2
++
++/* Command id associated with message IPCMSG_VRTC */
++#define IPC_CMD_VRTC_SETTIME      1 /* Set time */
++#define IPC_CMD_VRTC_SETALARM     2 /* Set alarm */
++#define IPC_CMD_VRTC_SYNC_RTC     3 /* Sync MSIC/PMIC RTC to VRTC */
++
++/* Command id associated with message IPCMSG_SHIM_CONFIG */
++#define IPC_CMD_SHIM_RD		0 /* SHIM read */
++#define IPC_CMD_SHIM_WR		1 /* SHIM write */
++
++/* check ipc status */
++int intel_scu_ipc_check_status(void);
+ 
+-/* Update single register based on the mask */
+-int intel_scu_ipc_update_register(u16 addr, u8 data, u8 mask);
+-
+-/* Issue commands to the SCU with or without data */
+-int intel_scu_ipc_simple_command(int cmd, int sub);
+-int intel_scu_ipc_command(int cmd, int sub, u32 *in, int inlen,
+-							u32 *out, int outlen);
+ /* I2C control api */
+ int intel_scu_ipc_i2c_cntrl(u32 addr, u32 *data);
+ 
+ /* Update FW version */
+-int intel_scu_ipc_fw_update(u8 *buffer, u32 length);
++int intel_scu_ipc_fw_update(void);
++int intel_scu_ipc_mrstfw_update(u8 *buffer, u32 length);
++int intel_scu_ipc_medfw_prepare(void __user *arg);
++
++#ifdef CONFIG_INTEL_SCU_IPC
++int intel_scu_ipc_read_mip(u8 *data, int len, int offset, int issigned);
++int intel_scu_ipc_write_umip(u8 *data, int len, int offset);
++#else
++/* Dummy function to prevent compilation error in BYT */
++static int intel_scu_ipc_read_mip(u8 *data, int len, int offset, int issigned)
++{
++	return 0;
++}
++static int intel_scu_ipc_write_umip(u8 *data, int len, int offset)
++{
++	return 0;
++}
++#endif
++
++/* NVRAM access */
++u32 intel_scu_ipc_get_nvram_size(void);
++phys_addr_t intel_scu_ipc_get_nvram_addr(void);
++
++/* Penwell has 4 osc clocks */
++#define OSC_CLK_AUDIO	0	/* Audio */
++#define OSC_CLK_CAM0	1	/* Primary camera */
++#define OSC_CLK_CAM1	2	/* Secondary camera */
++#define OSC_CLK_DISP	3	/* Display buffer */
++
++int intel_scu_ipc_osc_clk(u8 clk, unsigned int khz);
+ 
+ extern struct blocking_notifier_head intel_scu_notifier;
+ 
+diff --git a/arch/x86/include/asm/intel_scu_ipcutil.h b/arch/x86/include/asm/intel_scu_ipcutil.h
+new file mode 100644
+index 0000000..c38b8fc
+--- /dev/null
++++ b/arch/x86/include/asm/intel_scu_ipcutil.h
+@@ -0,0 +1,136 @@
++#ifndef _ASM_X86_INTEL_SCU_IPCUTIL_H_
++#define _ASM_X86_INTEL_SCU_IPCUTIL_H_
++
++#include <linux/types.h>
++
++/* ioctl commnds */
++#define INTEL_SCU_IPC_REGISTER_READ	0
++#define INTEL_SCU_IPC_REGISTER_WRITE	1
++#define INTEL_SCU_IPC_REGISTER_UPDATE	2
++#define INTEL_SCU_IPC_FW_UPDATE			    0xA2
++#define INTEL_SCU_IPC_MEDFIELD_FW_UPDATE	    0xA3
++#define INTEL_SCU_IPC_FW_REVISION_GET		    0xB0
++#define INTEL_SCU_IPC_FW_REVISION_EXT_GET	    0xB1
++#define INTEL_SCU_IPC_S0IX_RESIDENCY		    0xB8
++#define INTEL_SCU_IPC_READ_RR_FROM_OSNIB	    0xC1
++#define INTEL_SCU_IPC_WRITE_RR_TO_OSNIB		    0xC2
++#define INTEL_SCU_IPC_READ_VBATTCRIT		    0xC4
++#define INTEL_SCU_IPC_WRITE_ALARM_FLAG_TO_OSNIB	    0xC5
++#define INTEL_SCU_IPC_OSC_CLK_CNTL		    0xC6
++#define INTEL_SCU_IPC_PMDB_ACCESS		    0xD0
++
++#define SIGNED_MOS_ATTR		0x0
++#define SIGNED_COS_ATTR		0x0A
++#define SIGNED_RECOVERY_ATTR	0x0C
++#define SIGNED_POS_ATTR		0x0E
++#define SIGNED_FACTORY_ATTR	0x12
++
++enum intel_scu_ipc_wake_src {
++	WAKE_BATT_INSERT,
++	WAKE_PWR_BUTTON_PRESS,
++	WAKE_RTC_TIMER,
++	WAKE_USB_CHRG_INSERT,
++	WAKE_RESERVED,
++	WAKE_REAL_RESET,
++	WAKE_COLD_BOOT,
++	WAKE_UNKNOWN,
++	WAKE_KERNEL_WATCHDOG_RESET,
++	WAKE_SECURITY_WATCHDOG_RESET,
++	WAKE_WATCHDOG_COUNTER_EXCEEDED,
++	WAKE_POWER_SUPPLY_DETECTED,
++	WAKE_FASTBOOT_BUTTONS_COMBO,
++	WAKE_NO_MATCHING_OSIP_ENTRY,
++	WAKE_CRITICAL_BATTERY,
++	WAKE_INVALID_CHECKSUM,
++	WAKE_FORCED_RESET,
++	WAKE_ACDC_CHRG_INSERT,
++	WAKE_PMIC_WATCHDOG_RESET,
++	WAKE_PLATFORM_WATCHDOG_RESET,
++	WAKE_SC_WATCHDOG_RESET
++};
++
++struct scu_ipc_data {
++	u32	count;  /* No. of registers */
++	u16	addr[5]; /* Register addresses */
++	u8	data[5]; /* Register data */
++	u8	mask; /* Valid for read-modify-write */
++};
++
++struct scu_ipc_version {
++	u32	count;  /* length of version info */
++	u8	data[16]; /* version data */
++};
++
++struct osc_clk_t {
++	u32	id; /* clock id */
++	u32	khz; /* clock frequency */
++};
++
++/* PMDB buffer, cmd, and limits */
++#define PMDB_SIZE              512
++#define PMDB_WMDB_SIZE         76
++#define PMDB_OTPDB_SIZE        384
++#define PMDB_OTPCTL_SIZE       48
++#define PMDB_ACCESS_SIZE       16
++
++#define PMDB_SUB_CMD_R_WMDB    0
++#define PMDB_SUB_CMD_R_OTPDB   1
++#define PMDB_SUB_CMD_W_WMDB    2
++#define PMDB_SUB_CMD_W_OTPDB   3
++#define PMDB_SUB_CMD_R_OTPCTL  4
++
++struct scu_ipc_pmdb_buffer {
++	u32	sub; /* sub cmd of SCU's PMDB IPC commands */
++	u32	count; /* length of PMDB buffer */
++	u32	offset; /* buffer start offset for each PMDB component */
++	u8	data[PMDB_SIZE]; /* PMDB buffer */
++};
++
++/* Penwell has 4 osc clocks */
++#define OSC_CLK_AUDIO	0	/* Audio */
++#define OSC_CLK_CAM0	1	/* Primary camera */
++#define OSC_CLK_CAM1	2	/* Secondary camera */
++#define OSC_CLK_DISP	3	/* Display buffer */
++
++#ifdef __KERNEL__
++
++int intel_scu_ipc_osc_clk(u8 clk, unsigned int khz);
++
++enum clk0_mode {
++	CLK0_AUDIENCE = 0x4,
++	CLK0_VIBRA1 = 0x8,
++	CLK0_VIBRA2 = 0x10,
++	CLK0_MSIC = 0x20,
++	CLK0_DEBUG = 0x100,
++	CLK0_QUERY = 0x1000,
++};
++
++int intel_scu_ipc_set_osc_clk0(unsigned int enable, enum clk0_mode mode);
++
++/* Helpers to turn on/off msic vprog1 and vprog2 */
++int intel_scu_ipc_msic_vprog1(int on);
++int intel_scu_ipc_msic_vprog2(int on);
++int intel_scu_ipc_msic_vprog3(int on);
++
++/* OSHOB-OS Handoff Buffer read */
++phys_addr_t intel_scu_ipc_get_oshob_base(void);
++int intel_scu_ipc_get_oshob_size(void);
++
++/* SCU trace buffer interface */
++phys_addr_t intel_scu_ipc_get_scu_trace_buffer(void);
++u32 intel_scu_ipc_get_scu_trace_buffer_size(void);
++u32 intel_scu_ipc_get_fabricerror_buf1_offset(void);
++u32 intel_scu_ipc_get_fabricerror_buf2_offset(void);
++
++/* OSNIB interface. */
++int intel_scu_ipc_write_osnib(u8 *data, int len, int offset);
++int intel_scu_ipc_read_osnib(u8 *data, int len, int offset);
++int intel_scu_ipc_write_osnib_extend(u8 *data, int len, int offset);
++int intel_scu_ipc_read_osnib_extend(u8 *data, int len, int offset);
++int intel_scu_ipc_write_osnib_rr(u8 rr);
++int intel_scu_ipc_read_osnib_rr(u8 *rr);
++int intel_scu_ipc_read_osnib_wd(u8 *wd);
++int intel_scu_ipc_write_osnib_wd(u8 *wd);
++#endif
++
++#endif
+diff --git a/arch/x86/include/asm/intel_scu_pmic.h b/arch/x86/include/asm/intel_scu_pmic.h
+new file mode 100644
+index 0000000..308afa6
+--- /dev/null
++++ b/arch/x86/include/asm/intel_scu_pmic.h
+@@ -0,0 +1,16 @@
++#ifndef __INTEL_SCU_PMIC_H__
++#define __INTEL_SCU_PMIC_H__
++
++#include <asm/types.h>
++
++#define KOBJ_PMIC_ATTR(_name, _mode, _show, _store) \
++	struct kobj_attribute _name##_attr = __ATTR(_name, _mode, _show, _store)
++
++extern int intel_scu_ipc_ioread8(u16 addr, u8 *data);
++extern int intel_scu_ipc_ioread32(u16 addr, u32 *data);
++extern int intel_scu_ipc_readv(u16 *addr, u8 *data, int len);
++extern int intel_scu_ipc_iowrite8(u16 addr, u8 data);
++extern int intel_scu_ipc_writev(u16 *addr, u8 *data, int len);
++extern int intel_scu_ipc_update_register(u16 addr, u8 data, u8 mask);
++
++#endif /*__INTEL_SCU_PMIC_H__ */
+diff --git a/arch/x86/include/asm/intel_soc_debug.h b/arch/x86/include/asm/intel_soc_debug.h
+new file mode 100644
+index 0000000..9edb166
+--- /dev/null
++++ b/arch/x86/include/asm/intel_soc_debug.h
+@@ -0,0 +1,43 @@
++/*
++ * intel_soc_debug.h
++ * Copyright (c) 2013, Intel Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ */
++
++#ifndef INTEL_SOC_DEBUG_H
++#define INTEL_SOC_DEBUG_H
++
++#define DEBUG_FEATURE_PTI      0x00000001
++#define DEBUG_FEATURE_RTIT     0x00000002
++#define DEBUG_FEATURE_LAKEMORE 0x00000004
++#define DEBUG_FEATURE_SOCHAPS  0x00000008
++#define DEBUG_FEATURE_USB3DFX  0x00000010
++
++/* cpu_has_debug_feature checks whether the debug
++ * feature passed as parameter is enabled.
++ * The passed parameter shall be one (and only one)
++ * of the above values (DEBUG_FEATURE_XXX).
++ * The function returns 1 if the debug feature is
++ * enabled and 0 otherwise.
++ */
++
++#ifdef CONFIG_INTEL_DEBUG_FEATURE
++extern int cpu_has_debug_feature(u32 bit);
++#else
++static inline int cpu_has_debug_feature(u32 bit) { return 0; };
++#endif
++
++#endif
+diff --git a/arch/x86/include/asm/intel_sst_ctp.h b/arch/x86/include/asm/intel_sst_ctp.h
+new file mode 100644
+index 0000000..b418330
+--- /dev/null
++++ b/arch/x86/include/asm/intel_sst_ctp.h
+@@ -0,0 +1,81 @@
++/*
++ *  intel_sst_ctp.h - Common enum of the Clovertrail platform
++ *
++ *  Copyright (C) 2013 Intel Corp
++ *  Author: Samreen Nilofer <samreen.nilofer@intel.com>
++ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; version 2 of the License.
++ *
++ *  This program is distributed in the hope that it will be useful, but
++ *  WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License along
++ *  with this program; if not, write to the Free Software Foundation, Inc.,
++ *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ */
++#ifndef _INTEL_SST_CTP_H
++#define _INTEL_SST_CTP_H
++
++enum {
++	CTP_RHB_AUD_ASP_DEV = 0,
++	CTP_RHB_AUD_VSP_DEV,
++	CTP_RHB_AUD_COMP_ASP_DEV,
++	CTP_RHB_COMMS_BT_SCO_DEV,
++	CTP_RHB_COMMS_MSIC_VOIP_DEV,
++	CTP_RHB_COMMS_IFX_MODEM_DEV,
++	CTP_RHB_AUD_VIRTUAL_ASP_DEV,
++	CTP_RHB_AUD_PROBE_DEV,
++	CTP_RHB_COMMS_FM_DEV
++};
++
++enum {
++	CTP_VB_AUD_ASP_DEV = 0,
++	CTP_VB_AUD_VSP_DEV,
++	CTP_VB_AUD_COMP_ASP_DEV,
++	CTP_VB_COMMS_BT_SCO_DEV,
++	CTP_VB_COMMS_FM_DEV,
++	CTP_VB_AUD_PROBE_DEV,
++	CTP_VB_AUD_VIRTUAL_ASP_DEV,
++	CTP_VB_COMMS_VOIP_DEV,
++	CTP_VB_COMMS_MIXING_DEV,
++};
++
++enum {
++	MERR_BB_AUD_ASP_DEV = 0,
++	MERR_BB_AUD_VSP_DEV,
++	MERR_BB_COMMS_BT_SCO_DEV,
++	MERR_BB_COMMS_FM_DEV,
++	MERR_BB_COMMS_VOIP_DEV,
++	MERR_BB_COMMS_MIXING_DEV,
++	MERR_BB_AUD_VIRTUAL_ASP_DEV,
++	MERR_BB_AUD_PROBE_DEV,
++};
++
++enum {
++	CTP_HT_AUD_ASP_DEV = 0,
++	CTP_HT_AUD_VSP_DEV,
++	CTP_HT_AUD_COMP_ASP_DEV,
++	CTP_HT_COMMS_BT_SCO_DEV,
++	CTP_HT_COMMS_FM_DEV,
++	CTP_HT_COMMS_VOIP_DEV,
++	CTP_HT_AUD_VIRTUAL_ASP_DEV,
++	CTP_HT_AUD_PROBE_DEV,
++};
++
++enum {
++	CTP_LT_AUD_ASP_DEV = 0,
++	CTP_LT_AUD_VSP_DEV,
++	CTP_LT_AUD_COMP_ASP_DEV,
++	CTP_LT_COMMS_BT_SCO_DEV,
++	CTP_LT_COMMS_MSIC_VOIP_DEV,
++	CTP_LT_AUD_PROBE_DEV,
++};
++
++#endif
+diff --git a/arch/x86/include/asm/intel_sst_mrfld.h b/arch/x86/include/asm/intel_sst_mrfld.h
+new file mode 100644
+index 0000000..041ff85
+--- /dev/null
++++ b/arch/x86/include/asm/intel_sst_mrfld.h
+@@ -0,0 +1,44 @@
++/* intel_sst_mrlfd.h - Common enum of the Merrifield platform
++ *
++ *  Copyright (C) 2013 Intel Corp
++ *  Author: Samreen Nilofer <samreen.nilofer@intel.com>
++ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; version 2 of the License.
++ *
++ *  This program is distributed in the hope that it will be useful, but
++ *  WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *  General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License along
++ *  with this program; if not, write to the Free Software Foundation, Inc.,
++ *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ */
++#ifndef _INTEL_SST_MRFLD_H
++#define _INTEL_SST_MRFLD_H
++
++enum {
++	MERR_SALTBAY_AUDIO = 0,
++	MERR_SALTBAY_COMPR,
++	MERR_SALTBAY_VOIP,
++	MERR_SALTBAY_PROBE,
++	MERR_SALTBAY_AWARE,
++	MERR_SALTBAY_VAD,
++	MERR_SALTBAY_POWER,
++};
++
++enum {
++	MERR_DPCM_AUDIO = 0,
++	MERR_DPCM_DB,
++	MERR_DPCM_LL,
++	MERR_DPCM_COMPR,
++	MERR_DPCM_VOIP,
++	MERR_DPCM_PROBE,
++};
++
++#endif
+diff --git a/arch/x86/include/asm/intel_vlv2.h b/arch/x86/include/asm/intel_vlv2.h
+new file mode 100644
+index 0000000..a840ac4
+--- /dev/null
++++ b/arch/x86/include/asm/intel_vlv2.h
+@@ -0,0 +1,16 @@
++#ifndef __INTEL_VLV2_GPIO_H__
++#define __INTEL_VLV2_GPIO_H__
++
++#define VV_GPIO_BASE		0
++#define VV_GPIO_IRQBASE		256
++
++#define VV_NGPIO_SCORE		102
++#define VV_NGPIO_NCORE		28
++#define VV_NGPIO_SUS		44
++
++#define VV_PMIC_IRQBASE		456
++#define VV_PMIC_GPIO_IRQBASE	496
++#define VV_PMIC_GPIO_BASE	200
++
++#endif
++
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 2e6b731..9133a0a 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -78,6 +78,25 @@ config MFD_BCM590XX
+ 	help
+ 	  Support for the BCM590xx PMUs from Broadcom
+ 
++
++config INTEL_MID_PMIC
++	bool "Support for Intel MID PMIC"
++	depends on I2C=y
++	select MFD_CORE
++        select REGMAP_I2C
++        select REGMAP_IRQ
++	help
++	  Select this option to enable support of Intel
++	  PMIC chip.
++
++	  PMIC chip embeds ADC, GPIO, Thermals, Charge, etc.
++	  Devices are used in Intel platforms.
++
++	  PMIC driver is a multi function driver which
++	  supports to create all sub-devices inside PMIC.
++	  And it also provides IRQ dispatch function to
++	  sub-device drivers.
++
+ config MFD_AXP20X
+ 	bool "X-Powers AXP20X"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 53467e2..d918c2e 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -105,6 +105,8 @@ obj-$(CONFIG_MFD_DA9052_SPI)	+= da9052-spi.o
+ obj-$(CONFIG_MFD_DA9052_I2C)	+= da9052-i2c.o
+ obj-$(CONFIG_MFD_AXP20X)	+= axp20x.o
+ 
++obj-$(CONFIG_INTEL_MID_PMIC)	+= intel_pmic/
++
+ obj-$(CONFIG_MFD_LP3943)	+= lp3943.o
+ obj-$(CONFIG_MFD_LP8788)	+= lp8788.o lp8788-irq.o
+ 
+diff --git a/drivers/mfd/intel_pmic/Makefile b/drivers/mfd/intel_pmic/Makefile
+new file mode 100644
+index 0000000..bc6b41e
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/Makefile
+@@ -0,0 +1,5 @@
++#
++# Makefile for multifunction miscellaneous devices
++#
++
++obj-y	+= pmic.o pmic_i2c.o crystal_cove.o dollar_cove.o dollar_cove_ti.o
+diff --git a/drivers/mfd/intel_pmic/crystal_cove.c b/drivers/mfd/intel_pmic/crystal_cove.c
+new file mode 100644
+index 0000000..7cf9f8a
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/crystal_cove.c
+@@ -0,0 +1,156 @@
++/*
++ * Crystal Cove  --  Device access for Intel PMIC for VLV2
++ *
++ * Copyright (c) 2013, Intel Corporation.
++ *
++ * Author: Yang Bin <bin.yang@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/mfd/core.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/intel_mid_pmic.h>
++#include <linux/acpi.h>
++#include <asm/intel_vlv2.h>
++#include <linux/version.h>
++#include "./pmic.h"
++
++#define CRYSTAL_COVE_IRQ_NUM	7
++
++#define CHIPID		0x00
++#define CHIPVER		0x01
++#define IRQLVL1		0x02
++#define MIRQLVL1	0x0E
++enum {
++	PWRSRC_IRQ = 0,
++	THRM_IRQ,
++	BCU_IRQ,
++	ADC_IRQ,
++	CHGR_IRQ,
++	GPIO_IRQ,
++	VHDMIOCP_IRQ
++};
++
++static struct resource gpio_resources[] = {
++	{
++		.name	= "GPIO",
++		.start	= GPIO_IRQ,
++		.end	= GPIO_IRQ,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++static struct resource pwrsrc_resources[] = {
++	{
++		.name  = "PWRSRC",
++		.start = PWRSRC_IRQ,
++		.end   = PWRSRC_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource adc_resources[] = {
++	{
++		.name  = "ADC",
++		.start = ADC_IRQ,
++		.end   = ADC_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource thermal_resources[] = {
++	{
++		.name  = "THERMAL",
++		.start = THRM_IRQ,
++		.end   = THRM_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++static struct resource bcu_resources[] = {
++	{
++		.name  = "BCU",
++		.start = BCU_IRQ,
++		.end   = BCU_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++static struct mfd_cell crystal_cove_dev[] = {
++	{
++		.name = "crystal_cove_pwrsrc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(pwrsrc_resources),
++		.resources = pwrsrc_resources,
++	},
++	{
++		.name = "crystal_cove_adc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(adc_resources),
++		.resources = adc_resources,
++	},
++	{
++		.name = "crystal_cove_thermal",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(thermal_resources),
++		.resources = thermal_resources,
++	},
++	{
++		.name = "crystal_cove_bcu",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(bcu_resources),
++		.resources = bcu_resources,
++	},
++	{
++		.name = "crystal_cove_gpio",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(gpio_resources),
++		.resources = gpio_resources,
++	},
++	{NULL, },
++};
++
++#define CRYSTAL_COVE_IRQREGMAP(irq) \
++	[irq] = { \
++		{MIRQLVL1, irq, 1, 0}, \
++		{IRQLVL1,  irq, 1, 0}, \
++		INTEL_PMIC_REG_NULL, \
++	}
++
++struct intel_pmic_irqregmap crystal_cove_irqregmap[] = {
++	CRYSTAL_COVE_IRQREGMAP(PWRSRC_IRQ),
++	CRYSTAL_COVE_IRQREGMAP(THRM_IRQ),
++	CRYSTAL_COVE_IRQREGMAP(BCU_IRQ),
++	CRYSTAL_COVE_IRQREGMAP(ADC_IRQ),
++	CRYSTAL_COVE_IRQREGMAP(CHGR_IRQ),
++	CRYSTAL_COVE_IRQREGMAP(GPIO_IRQ),
++	CRYSTAL_COVE_IRQREGMAP(VHDMIOCP_IRQ),
++};
++
++static int crystal_cove_init(void)
++{
++	pr_info("Crystal Cove: ID 0x%02X, VERSION 0x%02X\n",
++		intel_mid_pmic_readb(CHIPID), intel_mid_pmic_readb(CHIPVER));
++	return 0;
++}
++
++struct intel_mid_pmic crystal_cove_pmic = {
++	.label		= "crystal cove",
++	.irq_flags	= IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++	.init		= crystal_cove_init,
++	.cell_dev 	= crystal_cove_dev,
++	.irq_regmap	= crystal_cove_irqregmap,
++	.irq_num	= CRYSTAL_COVE_IRQ_NUM,
++};
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Yang Bin <bin.yang@intel.com");
++
+diff --git a/drivers/mfd/intel_pmic/dollar_cove.c b/drivers/mfd/intel_pmic/dollar_cove.c
+new file mode 100644
+index 0000000..2fab128
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/dollar_cove.c
+@@ -0,0 +1,305 @@
++/*
++ * Dollar Cove  --  Device access for Intel PMIC for CR
++ *
++ * Copyright (c) 2014, Intel Corporation.
++ *
++ * Author: Yang Bin <bin.yang@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/mfd/core.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/intel_mid_pmic.h>
++#include <linux/acpi.h>
++#include <asm/intel_vlv2.h>
++#include <linux/version.h>
++#include "./pmic.h"
++
++enum {
++	VBUS_FALLING_IRQ = 2,
++	VBUS_RISING_IRQ,
++	VBUS_OV_IRQ,
++	VBUS_FALLING_ALT_IRQ,
++	VBUS_RISING_ALT_IRQ,
++	VBUS_OV_ALT_IRQ,
++
++	CHARGE_DONE_IRQ = 10,
++	CHARGE_CHARGING_IRQ,
++	BAT_SAFE_QUIT_IRQ,
++	BAT_SAFE_ENTER_IRQ,
++	BAT_ABSENT_IRQ,
++	BAT_APPEND_IRQ,
++
++	QWBTU_IRQ = 16,
++	WBTU_IRQ,
++	QWBTO_IRQ,
++	WBTO_IRQ,
++	QCBTU_IRQ,
++	CBTU_IRQ,
++	QCBTO_IRQ,
++	CBTO_IRQ,
++
++	WL2_IRQ = 24,
++	WL1_IRQ,
++	GPADC_IRQ,
++	OT_IRQ = 31,
++
++	GPIO0_IRQ = 32,
++	GPIO1_IRQ,
++	POKO_IRQ,
++	POKL_IRQ,
++	POKS_IRQ,
++	POKN_IRQ,
++	POKP_IRQ,
++	EVENT_IRQ,
++
++	MV_CHNG_IRQ = 40,
++	BC_USB_CHNG_IRQ,
++};
++
++static struct resource power_button_resources[] = {
++	{
++		.start	= POKN_IRQ,
++		.end	= POKN_IRQ,
++		.flags	= IORESOURCE_IRQ,
++	},
++	{
++		.start	= POKP_IRQ,
++		.end	= POKP_IRQ,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++
++static struct resource gpio_resources[] = {
++	{
++		.start	= GPIO0_IRQ,
++		.end	= GPIO1_IRQ,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++static struct resource adc_resources[] = {
++	{
++		.start = GPADC_IRQ,
++		.end   = GPADC_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource pwrsrc_resources[] = {
++	{
++		.start = VBUS_FALLING_IRQ,
++		.end   = VBUS_FALLING_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = VBUS_RISING_IRQ,
++		.end   = VBUS_RISING_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = MV_CHNG_IRQ,
++		.end   = MV_CHNG_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = BC_USB_CHNG_IRQ,
++		.end   = BC_USB_CHNG_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource charger_resources[] = {
++	{
++		.start = VBUS_OV_IRQ,
++		.end   = VBUS_OV_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = CHARGE_DONE_IRQ,
++		.end   = CHARGE_DONE_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = CHARGE_CHARGING_IRQ,
++		.end   = CHARGE_CHARGING_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = BAT_SAFE_QUIT_IRQ,
++		.end   = BAT_SAFE_QUIT_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = BAT_SAFE_ENTER_IRQ,
++		.end   = BAT_SAFE_ENTER_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = QCBTU_IRQ,
++		.end   = QCBTU_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = CBTU_IRQ,
++		.end   = CBTU_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = QCBTO_IRQ,
++		.end   = QCBTO_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = CBTO_IRQ,
++		.end   = CBTO_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource battery_resources[] = {
++	{
++		.start = QWBTU_IRQ,
++		.end   = QWBTU_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = WBTU_IRQ,
++		.end   = WBTU_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = QWBTO_IRQ,
++		.end   = QWBTO_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = WBTO_IRQ,
++		.end   = WBTO_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = WL2_IRQ,
++		.end   = WL2_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = WL1_IRQ,
++		.end   = WL1_IRQ,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct mfd_cell dollar_cove_dev[] = {
++	{
++		.name = "dollar_cove_adc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(adc_resources),
++		.resources = adc_resources,
++	},
++	{
++		.name = "dollar_cove_gpio",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(gpio_resources),
++		.resources = gpio_resources,
++	},
++	{
++		.name = "dollar_cove_power_button",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(power_button_resources),
++		.resources = power_button_resources,
++	},
++	{
++		.name = "dollar_cove_pwrsrc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(pwrsrc_resources),
++		.resources = pwrsrc_resources,
++	},
++	{
++		.name = "dollar_cove_charger",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(charger_resources),
++		.resources = charger_resources,
++	},
++	{
++		.name = "dollar_cove_battery",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(battery_resources),
++		.resources = battery_resources,
++	},
++	{NULL, },
++};
++
++#define DOLLAR_COVE_IRQREGMAP(irq) \
++	[irq] = { \
++		{(0x40 + (irq / 8)), (irq % 8), 1, INTEL_PMIC_REG_INV},\
++		{(0x48 + (irq / 8)), (irq % 8), 1, INTEL_PMIC_REG_W1C},\
++		{(0x48 + (irq / 8)), (irq % 8), 1, INTEL_PMIC_REG_W1C},\
++	}
++
++struct intel_pmic_irqregmap dollar_cove_irqregmap[] = {
++	DOLLAR_COVE_IRQREGMAP(VBUS_FALLING_IRQ),
++	DOLLAR_COVE_IRQREGMAP(VBUS_RISING_IRQ),
++	DOLLAR_COVE_IRQREGMAP(VBUS_OV_IRQ),
++	DOLLAR_COVE_IRQREGMAP(VBUS_FALLING_ALT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(VBUS_RISING_ALT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(VBUS_OV_ALT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(CHARGE_DONE_IRQ),
++	DOLLAR_COVE_IRQREGMAP(CHARGE_CHARGING_IRQ),
++	DOLLAR_COVE_IRQREGMAP(BAT_SAFE_QUIT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(BAT_SAFE_ENTER_IRQ),
++	DOLLAR_COVE_IRQREGMAP(BAT_ABSENT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(BAT_APPEND_IRQ),
++	DOLLAR_COVE_IRQREGMAP(QWBTU_IRQ),
++	DOLLAR_COVE_IRQREGMAP(WBTU_IRQ),
++	DOLLAR_COVE_IRQREGMAP(QWBTO_IRQ),
++	DOLLAR_COVE_IRQREGMAP(WBTO_IRQ),
++	DOLLAR_COVE_IRQREGMAP(QCBTU_IRQ),
++	DOLLAR_COVE_IRQREGMAP(CBTU_IRQ),
++	DOLLAR_COVE_IRQREGMAP(QCBTO_IRQ),
++	DOLLAR_COVE_IRQREGMAP(CBTO_IRQ),
++	DOLLAR_COVE_IRQREGMAP(WL2_IRQ),
++	DOLLAR_COVE_IRQREGMAP(WL1_IRQ),
++	DOLLAR_COVE_IRQREGMAP(GPADC_IRQ),
++	DOLLAR_COVE_IRQREGMAP(OT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(GPIO0_IRQ),
++	DOLLAR_COVE_IRQREGMAP(GPIO1_IRQ),
++	DOLLAR_COVE_IRQREGMAP(POKO_IRQ),
++	DOLLAR_COVE_IRQREGMAP(POKL_IRQ),
++	DOLLAR_COVE_IRQREGMAP(POKS_IRQ),
++	DOLLAR_COVE_IRQREGMAP(POKN_IRQ),
++	DOLLAR_COVE_IRQREGMAP(POKP_IRQ),
++	DOLLAR_COVE_IRQREGMAP(EVENT_IRQ),
++	DOLLAR_COVE_IRQREGMAP(MV_CHNG_IRQ),
++	DOLLAR_COVE_IRQREGMAP(BC_USB_CHNG_IRQ),
++};
++
++static int dollar_cove_init(void)
++{
++	pr_info("Dollar Cove: IC_TYPE 0x%02X\n", intel_mid_pmic_readb(0x03));
++	return 0;
++}
++
++struct intel_mid_pmic dollar_cove_pmic = {
++	.label		= "dollar cove",
++	.irq_flags	= IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++	.init		= dollar_cove_init,
++	.cell_dev 	= dollar_cove_dev,
++	.irq_regmap	= dollar_cove_irqregmap,
++	.irq_num	= 48,
++};
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Yang Bin <bin.yang@intel.com");
++
+diff --git a/drivers/mfd/intel_pmic/dollar_cove_ti.c b/drivers/mfd/intel_pmic/dollar_cove_ti.c
+new file mode 100644
+index 0000000..160663a
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/dollar_cove_ti.c
+@@ -0,0 +1,173 @@
++/*
++ * Dollar Cove  TI --  Device access for Intel PMIC for CR
++ *
++ * Copyright (c) 2014, Intel Corporation.
++ *
++ * Author: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/mfd/core.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/intel_mid_pmic.h>
++#include <linux/acpi.h>
++#include <asm/intel_vlv2.h>
++#include <linux/version.h>
++#include "./pmic.h"
++
++#define IRQLVL1		0x01
++#define MIRQLVL1	0x02
++
++enum {
++	PWRBTN = 0,
++	DIETMPWARN,
++	ADCCMPL,
++	VBATLOW = 4,
++	VBUSDET,
++	CCEOCAL =7,
++};
++
++static struct resource power_button_resources[] = {
++	{
++		.start	= PWRBTN,
++		.end	= PWRBTN,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++static struct resource thermal_resources[] = {
++	{
++		.start = DIETMPWARN,
++		.end   = DIETMPWARN,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource adc_resources[] = {
++	{
++		.start = ADCCMPL,
++		.end   = ADCCMPL,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource pwrsrc_resources[] = {
++	{
++		.start = VBUSDET,
++		.end   = VBUSDET,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct resource battery_resources[] = {
++	{
++		.start = VBATLOW,
++		.end   = VBATLOW,
++		.flags = IORESOURCE_IRQ,
++	},
++	{
++		.start = CCEOCAL,
++		.end   = CCEOCAL,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct mfd_cell dollar_cove_ti_dev[] = {
++	{
++		.name = "dollar_cove_ti_adc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(adc_resources),
++		.resources = adc_resources,
++	},
++	{
++		.name = "dollar_cove_ti_power_button",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(power_button_resources),
++		.resources = power_button_resources,
++	},
++	{
++		.name = "dollar_cove_ti_pwrsrc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(pwrsrc_resources),
++		.resources = pwrsrc_resources,
++	},
++	{
++		.name = "dollar_cove_ti_cc",
++		.id = 0,
++		.num_resources = ARRAY_SIZE(battery_resources),
++		.resources = battery_resources,
++	},
++	{
++		.name = "intel_fuel_gauge",
++		.id = 0,
++	},
++	{
++		.name = "intel_fg_iface",
++		.id = 0,
++	},
++	{NULL, },
++};
++
++#define DOLLAR_COVE_IRQREGMAP(irq) \
++	[irq] = { \
++		{MIRQLVL1, irq, 1, 0}, \
++		{IRQLVL1, irq, 1, INTEL_PMIC_REG_W1C}, \
++		{IRQLVL1, irq, 1, INTEL_PMIC_REG_W1C}, \
++	}
++
++struct intel_pmic_irqregmap dollar_cove_ti_irqregmap[] = {
++	DOLLAR_COVE_IRQREGMAP(PWRBTN),
++	DOLLAR_COVE_IRQREGMAP(DIETMPWARN),
++	DOLLAR_COVE_IRQREGMAP(ADCCMPL),
++	DOLLAR_COVE_IRQREGMAP(VBATLOW),
++	DOLLAR_COVE_IRQREGMAP(VBUSDET),
++	DOLLAR_COVE_IRQREGMAP(CCEOCAL),
++};
++
++static int dollar_cove_ti_init(void)
++{
++	int reg_val=0;
++
++	pr_info("Dollar Cove(TI: IC_TYPE 0x%02X\n", intel_mid_pmic_readb(0x00));
++	pr_info("Forcing Sleep Mode Vnn to 0.5V \n");
++
++	/* Write 0x14 to Register Buck5 VSleep Control: 0x2B */
++	reg_val = intel_mid_pmic_readb(0x2B);
++	if (reg_val < 0) {
++		pr_err("Error reading BUCK5 VSLEEP %x\n", reg_val);
++	}
++
++	else {
++		reg_val &= ~0xFE;
++		reg_val |= 0x14;
++
++		reg_val = intel_mid_pmic_writeb(0x2B, reg_val);
++		if (reg_val < 0) {
++			pr_err("Error setting VSLEEP Vnn to 0.5V %x\n", reg_val);
++		}
++	}
++
++	return 0;
++}
++
++struct intel_mid_pmic dollar_cove_ti_pmic = {
++	.label		= "dollar cove_ti",
++	.irq_flags	= IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++	.init		= dollar_cove_ti_init,
++	.cell_dev 	= dollar_cove_ti_dev,
++	.irq_regmap	= dollar_cove_ti_irqregmap,
++	.irq_num	= 8,
++};
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Ramakrishna Pallala <ramakrishna.pallala@intel.com");
+diff --git a/drivers/mfd/intel_pmic/pmic.c b/drivers/mfd/intel_pmic/pmic.c
+new file mode 100644
+index 0000000..4e3eb60
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/pmic.c
+@@ -0,0 +1,488 @@
++/*
++ * Crystal Cove  --  Device access for Intel PMIC for VLV2
++ *
++ * Copyright (c) 2013, Intel Corporation.
++ *
++ * Author: Yang Bin <bin.yang@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/mutex.h>
++#include <linux/mfd/core.h>
++#include <linux/err.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/workqueue.h>
++#include <linux/mfd/intel_mid_pmic.h>
++#include <linux/acpi.h>
++#include <asm/intel_vlv2.h>
++#include <linux/version.h>
++#include "./pmic.h"
++
++enum pmic_chip_type {CCOVE, DCOVE};
++
++static LIST_HEAD(pdata_list);
++struct cell_dev_pdata {
++        struct list_head	list;
++	const char		*name;
++	void			*data;
++	int			len;
++	int			id;
++};
++
++static struct intel_mid_pmic *pmic;
++static int cache_offset = -1, cache_read_val, cache_write_val, \
++	cache_write_pending, cache_flags;
++
++struct device *intel_mid_pmic_dev(void)
++{
++	return pmic->dev;
++}
++
++int intel_mid_pmic_readb(int reg)
++{
++	int ret;
++
++	if (!pmic)
++		return -EIO;
++	mutex_lock(&pmic->io_lock);
++	ret = pmic->readb(reg);
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++EXPORT_SYMBOL(intel_mid_pmic_readb);
++
++int intel_mid_pmic_writeb(int reg, u8 val)
++{
++	int ret;
++
++	if (!pmic)
++		return -EIO;
++	mutex_lock(&pmic->io_lock);
++	ret = pmic->writeb(reg, val);
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++EXPORT_SYMBOL(intel_mid_pmic_writeb);
++
++int intel_mid_pmic_setb(int reg, u8 mask)
++{
++	int ret;
++	int val;
++
++	if (!pmic)
++		return -EIO;
++	mutex_lock(&pmic->io_lock);
++	val = pmic->readb(reg);
++	val |= mask;
++	ret = pmic->writeb(reg, val);
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++EXPORT_SYMBOL(intel_mid_pmic_setb);
++
++int intel_mid_pmic_clearb(int reg, u8 mask)
++{
++	int ret;
++	int val;
++
++	if (!pmic)
++		return -EIO;
++	mutex_lock(&pmic->io_lock);
++	val = pmic->readb(reg);
++	val &= ~mask;
++	ret = pmic->writeb(reg, val);
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++EXPORT_SYMBOL(intel_mid_pmic_clearb);
++
++int intel_mid_pmic_update(int reg, u8 val, u8 mask)
++{
++	int ret;
++
++	if (!pmic)
++		return -EIO;
++	mutex_lock(&pmic->io_lock);
++	ret = pmic->readb(reg);
++	if (ret < 0)
++		goto err;
++	val &= mask;
++	ret &= ~mask;
++	ret |= val;
++	ret = pmic->writeb(reg, ret);
++err:
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++EXPORT_SYMBOL(intel_mid_pmic_update);
++
++int intel_scu_ipc_read_mip(u8 *data, int len, int offset, int issigned)
++{
++	return 0;
++}
++EXPORT_SYMBOL(intel_scu_ipc_read_mip);
++
++int intel_scu_ipc_ioread8(u16 addr, u8 *data)
++{
++	int ret;
++
++	ret = intel_mid_pmic_readb(addr);
++	if (ret < 0)
++		return ret;
++
++	*data = ret;
++	return 0;
++}
++EXPORT_SYMBOL(intel_scu_ipc_ioread8);
++
++int intel_scu_ipc_iowrite8(u16 addr, u8 data)
++{
++	return intel_mid_pmic_writeb(addr, data);
++}
++EXPORT_SYMBOL(intel_scu_ipc_iowrite8);
++
++int intel_scu_ipc_update_register(u16 addr, u8 data, u8 mask)
++{
++	return intel_mid_pmic_update(addr, data, mask);
++}
++EXPORT_SYMBOL(intel_scu_ipc_update_register);
++
++int intel_scu_ipc_readv(u16 *addr, u8 *data, int len)
++{
++	int i;
++	int ret;
++
++	if (len < 1 || len > 4)
++		return -EINVAL;
++
++	for (i = 0; i < len; i++) {
++		ret = intel_scu_ipc_ioread8(addr[i], &data[i]);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(intel_scu_ipc_readv);
++
++int intel_scu_ipc_writev(u16 *addr, u8 *data, int len)
++{
++	int i;
++	int ret;
++
++	if (len < 1 || len > 4)
++		return -EINVAL;
++
++	for (i = 0; i < len; i++) {
++		ret = intel_scu_ipc_iowrite8(addr[i], data[i]);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(intel_scu_ipc_writev);
++
++int intel_mid_pmic_set_pdata(const char *name, void *data, int len, int id)
++{
++	struct cell_dev_pdata *pdata;
++
++	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
++	if (!pdata) {
++		pr_err("intel_pmic: can't set pdata!\n");
++		return -ENOMEM;
++	}
++	pdata->name = name;
++	pdata->data = data;
++	pdata->len = len;
++	pdata->id = id;
++	list_add_tail(&pdata->list, &pdata_list);
++	return 0;
++}
++EXPORT_SYMBOL(intel_mid_pmic_set_pdata);
++
++static void __pmic_regmap_flush(void)
++{
++	if (cache_write_pending)
++		pmic->writeb(cache_offset, cache_write_val);
++	cache_offset = -1;
++	cache_write_pending = 0;
++}
++
++static void pmic_regmap_flush(void)
++{
++	mutex_lock(&pmic->io_lock);
++	__pmic_regmap_flush();
++	mutex_unlock(&pmic->io_lock);
++}
++
++static int pmic_regmap_write(struct intel_pmic_regmap *map, int val)
++{
++	int ret = 0;
++
++	if (!IS_PMIC_REG_VALID(map))
++		return -ENXIO;
++	if (IS_PMIC_REG_INV(map))
++		val = ~val;
++	mutex_lock(&pmic->io_lock);
++	if (cache_offset == map->offset) {
++		if (cache_flags != map->flags) {
++			dev_err(pmic->dev, "Same reg with diff flags\n");
++			__pmic_regmap_flush();
++		}
++	}
++	if (cache_offset != map->offset) {
++		__pmic_regmap_flush();
++		if (IS_PMIC_REG_WO(map) || IS_PMIC_REG_W1C(map)) {
++			cache_write_val = 0;
++			cache_read_val = pmic->readb(map->offset);
++		} else {
++			cache_read_val = pmic->readb(map->offset);
++			cache_write_val = cache_read_val;
++		}
++		if (cache_read_val < 0) {
++			dev_err(pmic->dev, "Register access error\n");
++			ret = -EIO;
++			goto err;
++		}
++		cache_offset = map->offset;
++		cache_flags = map->flags;
++	}
++	val = ((val & map->mask) << map->shift);
++	cache_write_val &= ~(map->mask << map->shift);
++	cache_write_val |= val;
++	cache_write_pending = 1;
++	if (!IS_PMIC_REG_WO(map) && !IS_PMIC_REG_W1C(map))
++		cache_read_val = cache_write_val;
++err:
++	dev_dbg(pmic->dev, "[%s]: offset=%x, shift=%x, mask=%x, flags=%x\n",
++		map->offset, map->shift, map->mask, map->flags);
++	dev_dbg(pmic->dev, "[%s]: cache_read=%x, cache_write=%x, ret=%x\n",
++		cache_read_val, cache_write_val, ret);
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++
++static int pmic_regmap_read(struct intel_pmic_regmap *map)
++{
++	int ret = 0;
++
++	if (!IS_PMIC_REG_VALID(map))
++		return -ENXIO;
++
++	mutex_lock(&pmic->io_lock);
++	if (cache_offset == map->offset) {
++		if (cache_flags != map->flags) {
++			dev_err(pmic->dev, "Same reg with diff flags\n");
++			__pmic_regmap_flush();
++		}
++	}
++	if (cache_offset != map->offset) {
++		__pmic_regmap_flush();
++		if (IS_PMIC_REG_WO(map) || IS_PMIC_REG_W1C(map)) {
++			cache_write_val = 0;
++			cache_read_val = pmic->readb(map->offset);
++		} else {
++			cache_read_val = pmic->readb(map->offset);
++			cache_write_val = cache_read_val;
++		}
++		if (cache_read_val < 0) {
++			dev_err(pmic->dev, "Register access error\n");
++			ret = -EIO;
++			goto err;
++		}
++		cache_offset = map->offset;
++		cache_flags = map->flags;
++	}
++	if (IS_PMIC_REG_INV(map))
++		ret = ~cache_read_val;
++	else
++		ret = cache_read_val;
++	ret = (ret >> map->shift) & map->mask;
++	if (!IS_PMIC_REG_WO(map) && !IS_PMIC_REG_W1C(map))
++		cache_write_val = cache_read_val;
++err:
++	dev_dbg(pmic->dev, "[%s]: offset=%x, shift=%x, mask=%x, flags=%x\n",
++		map->offset, map->shift, map->mask, map->flags);
++	dev_dbg(pmic->dev, "[%s]: cache_read=%x, cache_write=%x, ret=%x\n",
++		cache_read_val, cache_write_val, ret);
++	mutex_unlock(&pmic->io_lock);
++	return ret;
++}
++
++static void pmic_irq_enable(struct irq_data *data)
++{
++	clear_bit((data->irq - pmic->irq_base) % 32,
++		&(pmic->irq_mask[(data->irq - pmic->irq_base) / 32]));
++	pmic->irq_need_update = 1;
++}
++
++static void pmic_irq_disable(struct irq_data *data)
++{
++	set_bit((data->irq - pmic->irq_base) % 32,
++		&(pmic->irq_mask[(data->irq - pmic->irq_base) / 32]));
++	pmic->irq_need_update = 1;
++}
++
++static void pmic_irq_sync_unlock(struct irq_data *data)
++{
++	if (pmic->irq_need_update) {
++		if (test_bit((data->irq - pmic->irq_base) % 32,
++			&(pmic->irq_mask[(data->irq
++			- pmic->irq_base) / 32])))
++			pmic_regmap_write(&pmic->irq_regmap[(data->irq
++				- pmic->irq_base)].mask, 1);
++		else
++			pmic_regmap_write(&pmic->irq_regmap[(data->irq
++				- pmic->irq_base)].mask, 0);
++		pmic->irq_need_update = 0;
++		pmic_regmap_flush();
++	}
++	mutex_unlock(&pmic->irq_lock);
++}
++
++static void pmic_irq_lock(struct irq_data *data)
++{
++	mutex_lock(&pmic->irq_lock);
++}
++
++static irqreturn_t pmic_irq_isr(int irq, void *data)
++{
++	return IRQ_WAKE_THREAD;
++}
++
++static irqreturn_t pmic_irq_thread(int irq, void *data)
++{
++	int i;
++
++	mutex_lock(&pmic->irq_lock);
++	for (i = 0; i < pmic->irq_num; i++) {
++		if (test_bit(i % 32, &(pmic->irq_mask[i / 32])))
++			continue;
++		if (pmic_regmap_read(&pmic->irq_regmap[i].status)) {
++			pmic_regmap_write(&pmic->irq_regmap[i].ack, 1);
++			handle_nested_irq(pmic->irq_base + i);
++		}
++	}
++	pmic_regmap_flush();
++	mutex_unlock(&pmic->irq_lock);
++	return IRQ_HANDLED;
++}
++
++static struct irq_chip pmic_irq_chip = {
++	.name			= "intel_mid_pmic",
++	.irq_bus_lock		= pmic_irq_lock,
++	.irq_bus_sync_unlock	= pmic_irq_sync_unlock,
++	.irq_disable		= pmic_irq_disable,
++	.irq_enable		= pmic_irq_enable,
++};
++
++static int pmic_irq_init(void)
++{
++	int cur_irq;
++	int ret;
++	int i;
++
++	/* Mostly, it can help to increase cache hit if merge same register
++	   access in one loop */
++	for (i = 0; i < pmic->irq_num; i++) {
++		pmic_regmap_write(&pmic->irq_regmap[i].mask, 1);
++		set_bit(i % 32, &(pmic->irq_mask[i / 32]));
++	}
++	for (i = 0; i < pmic->irq_num; i++) {
++		pmic_regmap_write(&pmic->irq_regmap[i].ack, 1);
++	}
++	pmic_regmap_flush();
++
++	pmic->irq_base = irq_alloc_descs(VV_PMIC_IRQBASE, 0, pmic->irq_num, 0);
++	if (pmic->irq_base < 0) {
++		dev_warn(pmic->dev, "Failed to allocate IRQs: %d\n",
++			 pmic->irq_base);
++		pmic->irq_base = 0;
++		return -EINVAL;
++	} else {
++		dev_info(pmic->dev, "PMIC IRQ Base:%d\n", pmic->irq_base);
++	}
++
++	/* Register them with genirq */
++	for (cur_irq = pmic->irq_base;
++	     cur_irq < pmic->irq_num + pmic->irq_base;
++	     cur_irq++) {
++		irq_set_chip_data(cur_irq, pmic);
++		irq_set_chip_and_handler(cur_irq, &pmic_irq_chip,
++					 handle_edge_irq);
++		irq_set_nested_thread(cur_irq, 1);
++		irq_set_noprobe(cur_irq);
++	}
++	ret = request_threaded_irq(pmic->irq, pmic_irq_isr, pmic_irq_thread,
++			pmic->irq_flags, "intel_mid_pmic", pmic);
++	if (ret != 0) {
++		dev_err(pmic->dev, "Failed to request IRQ %d: %d\n",
++				pmic->irq, ret);
++		return ret;
++	}
++	ret = enable_irq_wake(pmic->irq);
++	if (ret != 0) {
++		dev_warn(pmic->dev, "Can't enable PMIC IRQ as wake source: %d\n",
++			 ret);
++	}
++
++	return 0;
++}
++
++int intel_pmic_add(struct intel_mid_pmic *chip)
++{
++	int i, ret;
++	struct cell_dev_pdata *pdata;
++
++	if (pmic != NULL)
++		return -EBUSY;
++	mutex_init(&chip->io_lock);
++	mutex_init(&chip->irq_lock);
++	pmic = chip;
++	if (pmic->init) {
++		ret = pmic->init();
++		if (ret != 0) {
++			pmic = NULL;
++			return ret;
++		}
++	}
++	pmic_irq_init();
++	for (i = 0; pmic->cell_dev[i].name != NULL; i++) {
++		list_for_each_entry(pdata, &pdata_list, list) {
++			if (!strcmp(pdata->name, pmic->cell_dev[i].name) &&
++					(pdata->id == pmic->cell_dev[i].id)) {
++				pmic->cell_dev[i].platform_data = pdata->data;
++				pmic->cell_dev[i].pdata_size = pdata->len;
++			}
++		}
++	}
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 1))
++	return mfd_add_devices(pmic->dev, -1, pmic->cell_dev, i,
++			NULL, pmic->irq_base, NULL);
++#else
++	return mfd_add_devices(pmic->dev, -1, pmic->cell_dev, i,
++			NULL, pmic->irq_base);
++#endif
++}
++
++int intel_pmic_remove(struct intel_mid_pmic *chip)
++{
++	if (pmic != chip)
++		return -ENODEV;
++	mfd_remove_devices(pmic->dev);
++	pmic = NULL;
++	return 0;
++}
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Yang Bin <bin.yang@intel.com");
++
+diff --git a/drivers/mfd/intel_pmic/pmic.h b/drivers/mfd/intel_pmic/pmic.h
+new file mode 100644
+index 0000000..5c0beef
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/pmic.h
+@@ -0,0 +1,61 @@
++#ifndef __INTEL_PMIC_H__
++#define __INTEL_PMIC_H__
++
++#define INTEL_PMIC_IRQ_MAX	128
++#define INTEL_PMIC_REG_NULL	{-1,}
++
++#define INTEL_PMIC_REG_INV	(1<<0) /*value revert*/
++#define INTEL_PMIC_REG_WO	(1<<1) /*write only*/
++#define INTEL_PMIC_REG_RO	(1<<2) /*read only*/
++#define INTEL_PMIC_REG_W1C	(1<<3) /*write 1 clear*/
++#define INTEL_PMIC_REG_RC	(1<<4) /*read clear*/
++#define IS_PMIC_REG_INV(_map)	(_map->flags & INTEL_PMIC_REG_INV)
++#define IS_PMIC_REG_WO(_map)	(_map->flags & INTEL_PMIC_REG_WO)
++#define IS_PMIC_REG_RO(_map)	(_map->flags & INTEL_PMIC_REG_RO)
++#define IS_PMIC_REG_W1C(_map)	(_map->flags & INTEL_PMIC_REG_W1C)
++#define IS_PMIC_REG_RC(_map)	(_map->flags & INTEL_PMIC_REG_RC)
++#define IS_PMIC_REG_VALID(_map) \
++	((_map->mask != 0 ) && (_map->offset >= 0))
++struct intel_pmic_regmap {
++	int offset;
++	int shift;
++	int mask;
++	int flags;
++};
++
++struct intel_pmic_irqregmap {
++	struct intel_pmic_regmap	mask;
++	struct intel_pmic_regmap	status;
++	struct intel_pmic_regmap	ack;
++};
++
++struct intel_mid_pmic {
++	const char			*label;
++	struct device			*dev;
++	struct mutex			io_lock;
++	struct mutex			irq_lock;
++	int				irq_need_update;
++	int 				irq;
++	unsigned long 			irq_flags;
++	int 				irq_num;
++	int 				irq_base;
++	unsigned long	 		irq_mask[INTEL_PMIC_IRQ_MAX/32];
++	int (*init)(void);
++	int (*readb)(int);
++	int (*writeb)(int, u8);
++#define PMIC_IRQREG_MASK	0
++#define PMIC_IRQREG_STATUS	1
++#define PMIC_IRQREG_ACK		2
++	struct intel_pmic_irqregmap	*irq_regmap;
++	struct mfd_cell		*cell_dev;
++};
++
++int intel_pmic_add(struct intel_mid_pmic *chip);
++int intel_pmic_remove(struct intel_mid_pmic *chip);
++
++extern struct intel_mid_pmic crystal_cove_pmic;
++extern struct intel_mid_pmic dollar_cove_pmic;
++extern struct intel_mid_pmic dollar_cove_ti_pmic;
++
++#endif
++
+diff --git a/drivers/mfd/intel_pmic/pmic_i2c.c b/drivers/mfd/intel_pmic/pmic_i2c.c
+new file mode 100644
+index 0000000..070be8b
+--- /dev/null
++++ b/drivers/mfd/intel_pmic/pmic_i2c.c
+@@ -0,0 +1,144 @@
++/*
++ * Copyright (c) 2013, Intel Corporation.
++ *
++ * Author: Yang Bin <bin.yang@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/delay.h>
++#include <linux/mfd/core.h>
++#include <linux/err.h>
++#include <linux/i2c.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/workqueue.h>
++#include <linux/acpi.h>
++#include <linux/mfd/intel_mid_pmic.h>
++#include <linux/version.h>
++#include "./pmic.h"
++
++static struct i2c_client *pmic_i2c_client;
++static struct intel_mid_pmic *pmic_i2c;
++
++static int pmic_i2c_readb(int reg)
++{
++	return i2c_smbus_read_byte_data(pmic_i2c_client, reg);
++}
++
++static int pmic_i2c_writeb(int reg, u8 val)
++{
++	return i2c_smbus_write_byte_data(pmic_i2c_client, reg, val);
++}
++
++static void pmic_shutdown(struct i2c_client *client)
++{
++	disable_irq(pmic_i2c_client->irq);
++	return;
++}
++
++static int pmic_suspend(struct device *dev)
++{
++	disable_irq(pmic_i2c_client->irq);
++	return 0;
++}
++
++static int pmic_resume(struct device *dev)
++{
++	enable_irq(pmic_i2c_client->irq);
++	return 0;
++}
++
++static const struct dev_pm_ops pmic_pm_ops = {
++		SET_SYSTEM_SLEEP_PM_OPS(pmic_suspend,
++				pmic_resume)
++};
++
++static int pmic_i2c_probe(struct i2c_client *i2c,
++			    const struct i2c_device_id *id)
++{
++	if (pmic_i2c_client != NULL || pmic_i2c != NULL)
++		return -EBUSY;
++	pmic_i2c 	= (struct intel_mid_pmic *)id->driver_data;
++	pmic_i2c_client	= i2c;
++	pmic_i2c->dev	= &i2c->dev;
++	pmic_i2c->irq	= i2c->irq;
++	pmic_i2c->readb	= pmic_i2c_readb;
++	pmic_i2c->writeb= pmic_i2c_writeb;
++	return intel_pmic_add(pmic_i2c);
++}
++
++static int pmic_i2c_remove(struct i2c_client *i2c)
++{
++	int ret = intel_pmic_remove(pmic_i2c);
++
++	pmic_i2c_client = NULL;
++	pmic_i2c = NULL;
++	return ret;
++}
++
++static const struct i2c_device_id pmic_i2c_id[] = {
++	{ "crystal_cove", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "TEST0001", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "TEST0001:00", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "INT33FD", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "INT33FD:00", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "INT33F4", (kernel_ulong_t)&dollar_cove_pmic},
++	{ "INT33F4:00", (kernel_ulong_t)&dollar_cove_pmic},
++	{ "dollar_cove", (kernel_ulong_t)&dollar_cove_pmic},
++	{ "INT33F5", (kernel_ulong_t)&dollar_cove_ti_pmic},
++	{ "INT33F5:00", (kernel_ulong_t)&dollar_cove_ti_pmic},
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, pmic_i2c_id);
++
++static struct acpi_device_id pmic_acpi_match[] = {
++	{ "TEST0001", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "INT33FD", (kernel_ulong_t)&crystal_cove_pmic},
++	{ "INT33F4", (kernel_ulong_t)&dollar_cove_pmic},
++	{ "INT33F5", (kernel_ulong_t)&dollar_cove_ti_pmic},
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, pmic_acpi_match);
++
++static struct i2c_driver pmic_i2c_driver = {
++	.driver = {
++		.name = "intel_mid_i2c_pmic",
++		.owner = THIS_MODULE,
++		.pm = &pmic_pm_ops,
++		.acpi_match_table = ACPI_PTR(pmic_acpi_match),
++	},
++	.probe = pmic_i2c_probe,
++	.remove = pmic_i2c_remove,
++	.id_table = pmic_i2c_id,
++	.shutdown = pmic_shutdown,
++};
++
++static int __init pmic_i2c_init(void)
++{
++	int ret;
++
++	ret = i2c_add_driver(&pmic_i2c_driver);
++	if (ret != 0)
++		pr_err("Failed to register pmic I2C driver: %d\n", ret);
++
++	return ret;
++}
++subsys_initcall(pmic_i2c_init);
++
++static void __exit pmic_i2c_exit(void)
++{
++	i2c_del_driver(&pmic_i2c_driver);
++}
++module_exit(pmic_i2c_exit);
++
++MODULE_DESCRIPTION("PMIC I2C support for INTEL PMIC");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Yang Bin <bin.yang@intel.com");
++
++
+diff --git a/include/linux/mfd/intel_mid_pmic.h b/include/linux/mfd/intel_mid_pmic.h
+new file mode 100644
+index 0000000..7026edc
+--- /dev/null
++++ b/include/linux/mfd/intel_mid_pmic.h
+@@ -0,0 +1,24 @@
++#ifndef __INTEL_MID_PMIC_H__
++#define __INTEL_MID_PMIC_H__
++
++#ifdef CONFIG_INTEL_MID_PMIC
++int intel_mid_pmic_readb(int reg);
++int intel_mid_pmic_writeb(int reg, u8 val);
++int intel_mid_pmic_setb(int reg, u8 mask);
++int intel_mid_pmic_clearb(int reg, u8 mask);
++int intel_mid_pmic_update(int reg, u8 val, u8 mask);
++int intel_mid_pmic_set_pdata(const char *name, void *data, int len, int id);
++struct device *intel_mid_pmic_dev(void);
++#else
++static inline int intel_mid_pmic_readb(int reg) { return 0; }
++static inline int intel_mid_pmic_writeb(int reg, u8 val) { return 0; }
++static inline int intel_mid_pmic_setb(int reg, u8 mask) { return 0; }
++static inline int intel_mid_pmic_clearb(int reg, u8 mask) { return 0; }
++static inline int intel_mid_pmic_set_pdata(const char *name,
++				void *data, int len, int id) {
++	return 0;
++}
++static inline struct device *intel_mid_pmic_dev(void) { return NULL; }
++#endif
++#endif
++
+diff --git a/include/linux/mfd/intel_msic.h b/include/linux/mfd/intel_msic.h
+index 439a7a6..0b94093 100644
+--- a/include/linux/mfd/intel_msic.h
++++ b/include/linux/mfd/intel_msic.h
+@@ -12,6 +12,8 @@
+ #ifndef __LINUX_MFD_INTEL_MSIC_H__
+ #define __LINUX_MFD_INTEL_MSIC_H__
+ 
++#include <asm/intel_mid_gpadc.h>
++
+ /* ID */
+ #define INTEL_MSIC_ID0			0x000	/* RO */
+ #define INTEL_MSIC_ID1			0x001	/* RO */
+@@ -52,6 +54,15 @@
+ #define INTEL_MSIC_PBCONFIG		0x03e
+ #define INTEL_MSIC_PBSTATUS		0x03f	/* RO */
+ 
++/*
++ * MSIC interrupt tree is readable from SRAM at INTEL_MSIC_IRQ_PHYS_BASE.
++ * Since IRQ block starts from address 0x002 we need to substract that from
++ * the actual IRQ status register address.
++ */
++#define MSIC_IRQ_STATUS(x)      (INTEL_MSIC_IRQ_PHYS_BASE + ((x) - 2))
++#define MSIC_IRQ_STATUS_ACCDET  MSIC_IRQ_STATUS(INTEL_MSIC_ACCDET)
++#define MSIC_IRQ_STATUS_OCAUDIO MSIC_IRQ_STATUS(INTEL_MSIC_OCAUDIO)
++
+ /* GPIO */
+ #define INTEL_MSIC_GPIO0LV7CTLO		0x040
+ #define INTEL_MSIC_GPIO0LV6CTLO		0x041
+@@ -377,9 +388,41 @@
+ /**
+  * struct intel_msic_gpio_pdata - platform data for the MSIC GPIO driver
+  * @gpio_base: base number for the GPIOs
++ * @ngpio_lv: number of low voltage GPIOs
++ * @ngpio_hv: number of high voltage GPIOs
++ * @gpio0_lv_ctlo: low voltage GPIO0 output control register
++ * @gpio0_lv_ctli: low voltage GPIO0 input control register
++ * @gpio0_hv_ctlo: high voltage GPIO0 output control register
++ * @gpio0_hv_ctli: high voltage GPIO0 input control register
++ * @can_sleep: flag for gpio chip
+  */
+ struct intel_msic_gpio_pdata {
+ 	unsigned	gpio_base;
++	int		ngpio_lv;
++	int		ngpio_hv;
++	u16		gpio0_lv_ctlo;
++	u16		gpio0_lv_ctli;
++	u16		gpio0_hv_ctlo;
++	u16		gpio0_hv_ctli;
++	int		can_sleep;
++};
++
++#define DISABLE_VCRIT	0x01
++#define DISABLE_VWARNB	0x02
++#define DISABLE_VWARNA	0x04
++/**
++ * struct intel_msic_vdd_pdata - platform data for the MSIC VDD driver
++ * @msi: MSI number used for VDD interrupts
++ *
++ * The MSIC CTP driver converts @msi into an IRQ number and passes it to
++ * the VDD driver as %IORESOURCE_IRQ.
++ */
++struct intel_msic_vdd_pdata {
++	unsigned	msi;
++	/* is set if device is ctp */
++	u8 is_clvp;
++	/* 1 = VCRIT, 2 = WARNB, 4 = WARNA */
++	u8 disable_unused_comparator;
+ };
+ 
+ /**
+@@ -429,6 +472,7 @@ struct intel_msic_platform_data {
+ 	int				irq[INTEL_MSIC_BLOCK_LAST];
+ 	struct intel_msic_gpio_pdata	*gpio;
+ 	struct intel_msic_ocd_pdata	*ocd;
++	struct intel_mid_gpadc_platform_data	*gpadc;
+ };
+ 
+ struct intel_msic;
+-- 
+1.9.1
+

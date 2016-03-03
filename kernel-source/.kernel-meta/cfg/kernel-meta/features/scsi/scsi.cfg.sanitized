@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/scsi/scsi.cfg
+CONFIG_SCSI=y

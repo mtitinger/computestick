@@ -1,0 +1,148 @@
+From e754c55d3491e38f9a3b017f26e06edf30325dda Mon Sep 17 00:00:00 2001
+From: Sudhakar Krishnan <sudhakar25@gmail.com>
+Date: Mon, 26 Oct 2015 18:44:45 -0700
+Subject: [PATCH] AXP288 fuel gauge
+
+---
+ drivers/power/axp288_fuel_gauge.c | 60 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 56 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/power/axp288_fuel_gauge.c b/drivers/power/axp288_fuel_gauge.c
+index bd1dbfe..0a562ef 100644
+--- a/drivers/power/axp288_fuel_gauge.c
++++ b/drivers/power/axp288_fuel_gauge.c
+@@ -157,12 +157,37 @@ static enum power_supply_property fuel_gauge_props[] = {
+ 	POWER_SUPPLY_PROP_MODEL_NAME,
+ };
+ 
++#define PLATFORM_DATA
++
++#ifdef PLATFORM_DATA
++
++static struct axp20x_fg_pdata pdata;
++static void *get_platform_data(void)
++{
++
++	pdata.design_cap = 4980;
++	pdata.min_volt = 3400;
++	pdata.max_volt = 4350;
++	pdata.max_temp = 45;
++	pdata.min_temp = 0;
++
++    return &pdata;
++}
++
++void *axp288_fg_data(void *info)
++{
++	return get_platform_data();
++}
++#endif
++
+ static int fuel_gauge_reg_readb(struct axp288_fg_info *info, int reg)
+ {
+ 	int ret, i;
+ 	unsigned int val;
+ 
+ 	for (i = 0; i < NR_RETRY_CNT; i++) {
++		ret = regmap_read(info->regmap, 0xB9, &val);
++		printk("axp288_fuel_gauge: \n ret:%d val:%d", ret, val);
+ 		ret = regmap_read(info->regmap, reg, &val);
+ 		if (ret == -EBUSY)
+ 			continue;
+@@ -418,6 +443,7 @@ current_read_fail:
+ 	return ret;
+ }
+ 
++#ifdef PLATFORM_DATA
+ static int temp_to_adc(struct axp288_fg_info *info, int tval)
+ {
+ 	int rntc = 0, i, ret, adc_val;
+@@ -459,6 +485,7 @@ static int temp_to_adc(struct axp288_fg_info *info, int tval)
+ 
+ 	return adc_val;
+ }
++#endif
+ 
+ static int adc_to_temp(struct axp288_fg_info *info, int adc_val)
+ {
+@@ -593,7 +620,7 @@ static int fuel_gauge_get_property(struct power_supply *ps,
+ 
+ 	mutex_lock(&info->lock);
+ 	switch (prop) {
+-	case POWER_SUPPLY_PROP_STATUS:
++		/*	case POWER_SUPPLY_PROP_STATUS:
+ 		fuel_gauge_get_status(info);
+ 		val->intval = info->status;
+ 		break;
+@@ -628,8 +655,12 @@ static int fuel_gauge_get_property(struct power_supply *ps,
+ 		else
+ 			val->intval = 0;
+ 		break;
++		*/
+ 	case POWER_SUPPLY_PROP_CAPACITY:
+-		ret = fuel_gauge_reg_readb(info, AXP20X_FG_RES);
++		//ret = fuel_gauge_reg_readb(info, AXP20X_FG_RES);
++		ret = fuel_gauge_reg_readb(info, 0xB9);
++		dev_info(&info->pdev->dev,
++				"reading capacity\n");
+ 		if (ret < 0)
+ 			goto fuel_gauge_read_err;
+ 
+@@ -637,7 +668,10 @@ static int fuel_gauge_get_property(struct power_supply *ps,
+ 			dev_err(&info->pdev->dev,
+ 				"capacity measurement not valid\n");
+ 		val->intval = (ret & FG_REP_CAP_VAL_MASK);
++		dev_info(&info->pdev->dev,
++				 "current capacity is %d", val->intval);
+ 		break;
++		/*
+ 	case POWER_SUPPLY_PROP_CAPACITY_ALERT_MIN:
+ 		ret = fuel_gauge_reg_readb(info, AXP288_FG_LOW_CAP_REG);
+ 		if (ret < 0)
+@@ -697,6 +731,7 @@ static int fuel_gauge_get_property(struct power_supply *ps,
+ 	case POWER_SUPPLY_PROP_MODEL_NAME:
+ 		val->strval = info->pdata->battid;
+ 		break;
++		*/
+ 	default:
+ 		mutex_unlock(&info->lock);
+ 		return -EINVAL;
+@@ -1092,8 +1127,25 @@ static int axp288_fuel_gauge_probe(struct platform_device *pdev)
+ 	info->regmap_irqc = axp20x->regmap_irqc;
+ 	info->status = POWER_SUPPLY_STATUS_UNKNOWN;
+ 	info->pdata = pdev->dev.platform_data;
+-	if (!info->pdata)
++#ifdef PLATFORM_DATA
++	info->pdata = axp288_fg_data(NULL);
++#else
++	info->pdata = pdev->dev.platform_data;
++//	if (!info->pdata)
++#endif
++#ifdef PLATFORM_DATA
++	if (!info->pdata){
++		printk("platform device name: %s\n", pdev->name);
++		printk("platform device id: %d\n", pdev->id);
++		if (pdev->dev.parent->platform_data != NULL)
++			printk("we have pdev->dev.parent->platform_data here\n");
++		printk("device parent name: %s\n", pdev->dev.parent->init_name);
++		if (pdev->dev.parent != NULL)
++			printk("we have pdev->dev.parent here\n");
++		printk("no platform data\n");
+ 		return -ENODEV;
++	}
++#endif
+ 
+ 	platform_set_drvdata(pdev, info);
+ 
+@@ -1117,7 +1169,7 @@ static int axp288_fuel_gauge_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static struct platform_device_id axp288_fg_id_table[] = {
++static const struct platform_device_id axp288_fg_id_table[] = {
+ 	{ .name = DEV_NAME },
+ 	{},
+ };
+-- 
+1.9.1
+

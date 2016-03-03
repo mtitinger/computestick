@@ -1,0 +1,6 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/cfg/net/ipv6.cfg
+CONFIG_IPV6=y
+CONFIG_INET6_TUNNEL=m
+CONFIG_IPV6_TUNNEL=m
+CONFIG_IPV6_ROUTER_PREF=y

@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/usb/usb-base.cfg
+CONFIG_USB_SUPPORT=y
+CONFIG_USB=y

@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/usb/touchscreen-composite.cfg
+CONFIG_TOUCHSCREEN_USB_COMPOSITE=m

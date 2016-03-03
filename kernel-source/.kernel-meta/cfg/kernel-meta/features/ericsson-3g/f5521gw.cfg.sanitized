@@ -1,0 +1,5 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/ericsson-3g/f5521gw.cfg
+CONFIG_USB_ACM=m
+CONFIG_USB_WDM=m
+CONFIG_USB_NET_CDC_NCM=m

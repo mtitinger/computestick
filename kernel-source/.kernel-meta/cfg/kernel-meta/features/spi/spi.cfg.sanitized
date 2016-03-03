@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/spi/spi.cfg
+CONFIG_SPI=y
+CONFIG_SPI_MASTER=y

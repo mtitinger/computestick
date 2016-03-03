@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/fuse/fuse.cfg
+CONFIG_FUSE_FS=m
+CONFIG_CUSE=m

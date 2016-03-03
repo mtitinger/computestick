@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/lttng/lttng.cfg
+CONFIG_TRACEPOINTS=y

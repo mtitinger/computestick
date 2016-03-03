@@ -1,0 +1,241 @@
+From 86e1971caf86d9b2623d4839cb94b8746f006450 Mon Sep 17 00:00:00 2001
+From: Borun Fu <borun.fu@linux.intel.com>
+Date: Tue, 17 Feb 2015 17:22:54 -0800
+Subject: [PATCH] mfd: axp20x: Extcon, Fuel Gauge and Charger platform data
+ for axp288 PMIC
+
+Signed-off-by: Borun Fu <borun.fu@linux.intel.com>
+---
+ drivers/mfd/axp20x.c |  202 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index 3f576b7..83f7e60 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -576,6 +576,206 @@ static struct mfd_cell axp288_cells[] = {
+ 	},
+ };
+ 
++/* fuel gauge platform data defaults */
++
++#define PD_DEF_BATTID		"INTN0001"
++#define PD_DEF_MIN_VOLT	3400
++#define PD_DEF_MAX_VOLT	4350
++#define PD_DEF_DESIGN_CAP	4045
++#define PD_DEF_RDC		151
++
++static int const fg_def_ocv_curve[]
++	[2] = {
++	{0, 2992000},
++	{0, 3132800},
++	{0, 3273600},
++	{0, 3344000},
++	{0, 3414400},
++	{0, 3484800},
++	{0, 3555200},
++	{1, 3590400},
++	{2, 3608000},
++	{2, 3625600},
++	{3, 3643200},
++	{5, 3660800},
++	{9, 3696000},
++	{15, 3731200},
++	{24, 3766400},
++	{36, 3801600},
++	{41, 3819200},
++	{46, 3836800},
++	{50, 3854400},
++	{53, 3872000},
++	{59, 3907200},
++	{64, 3942400},
++	{69, 3977600},
++	{73, 4012800},
++	{76, 4048000},
++	{80, 4083200},
++	{83, 4118400},
++	{85, 4136000},
++	{87, 4153600},
++	{90, 4188800},
++	{93, 4224000},
++	{97, 4259200},
++	{100, 4294400},
++	{100, 4329600},
++};
++
++static int const fg_def_thermistor_curve[]
++	[2] = {
++	{2200, 70},
++	{2500, 65},
++	{3000, 60},
++	{3500, 55},
++	{4100, 50},
++	{4900, 45},
++	{5800, 40},
++	{6900, 35},
++	{8300, 30},
++	{10000, 25},
++	{12000, 20},
++	{14600, 15},
++	{17900, 10},
++	{22000, 5},
++	{27200, 0},
++	{33800, -5},
++	{40760, -9},
++};
++
++static int axp20x_chrg_pdata(struct axp20x_dev *axp20x)
++{
++	struct axp20x_chrg_pdata *pdata;
++	struct axp20x_fg_pdata *fg_pdata = NULL;
++	int i;
++
++	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	for (i = 0; i < axp20x->nr_cells; i++)
++		if (!strcmp("axp288_fuel_gauge", axp20x->cells[i].name))
++			fg_pdata =
++				(struct axp20x_fg_pdata *)axp20x->cells[i].platform_data;
++
++	pdata->max_cc = 2000;
++	pdata->max_cv = 4350;
++	pdata->def_cc = 1600;
++	pdata->def_cv = 4200;
++	pdata->def_ilim = 900;
++	pdata->def_iterm = 300;
++	pdata->def_max_temp = 45;
++	pdata->def_min_temp = 0;
++
++	if(fg_pdata) {
++		if (pdata->max_cv > fg_pdata->max_volt)
++			pdata->max_cv = fg_pdata->max_volt;
++
++		if (pdata->def_cv > fg_pdata->max_volt)
++			pdata->def_cv = fg_pdata->max_volt;
++	}
++
++	for (i = 0; i < axp20x->nr_cells; i++) {
++		if (!strcmp("axp288_charger", axp20x->cells[i].name)) {
++			axp20x->cells[i].platform_data = (void *)pdata;
++			axp20x->cells[i].pdata_size = sizeof(*pdata);
++		}
++	}
++	return 0;
++}
++
++static int axp20x_fg_pdata(struct axp20x_dev *axp20x)
++{
++	struct axp20x_fg_pdata *pdata;
++	int i, scaled_capacity, rdc;
++
++	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	/*
++	 * initialize the platform data with sensible defaults
++	 * units for platform data are degrees, mA, mV, mW
++	 */
++	memcpy(pdata->battid, PD_DEF_BATTID, strlen(PD_DEF_BATTID));
++	pdata->min_volt = PD_DEF_MIN_VOLT;
++	pdata->max_volt = PD_DEF_MAX_VOLT;
++	pdata->max_temp = PD_DEF_MAX_TEMP;
++	pdata->min_temp = PD_DEF_MIN_TEMP;
++	pdata->design_cap = PD_DEF_DESIGN_CAP;
++	rdc = PD_DEF_RDC;
++
++	/* OCV curve is a table matching OCV to percent full */
++	for (i = 0; i < OCV_CURVE_SIZE; i++)
++		pdata->ocv_curve[i] = fg_def_ocv_curve[i+1][0];
++
++	/* Thermal curve is a table matching resistance to temp */
++	pdata->tcsz = ARRAY_SIZE(fg_def_thermistor_curve);
++	for (i = 0; i < pdata->tcsz; i++) {
++		pdata->thermistor_curve[i][0] =
++			fg_def_thermistor_curve[i][0];
++		pdata->thermistor_curve[i][1] =
++			fg_def_thermistor_curve[i][1];
++	}
++
++	scaled_capacity = (pdata->design_cap >> 1) +
++			(pdata->design_cap >> 3) +
++			(pdata->design_cap >> 4);
++
++	pdata->cap0 = scaled_capacity & 0xFF;
++	pdata->cap1 = (scaled_capacity >> 8) | 0x80;
++	pdata->rdc0 = rdc & 0xFF;
++	pdata->rdc1 = ((rdc >> 8) & 0xFF) | 0x80;
++
++	for (i = 0; i < axp20x->nr_cells; i++) {
++		if (!strcmp("axp288_fuel_gauge", axp20x->cells[i].name)) {
++			axp20x->cells[i].platform_data = (void *)pdata;
++			axp20x->cells[i].pdata_size = sizeof(*pdata);
++		}
++	}
++	return 0;
++}
++
++static int axp20x_extcon_pdata(struct axp20x_dev *axp20x)
++{
++	struct axp288_extcon_pdata *pdata;
++	int i;
++
++	pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	/* WA to disable OTG support */
++	pdata->gpio_mux_cntl = NULL;
++
++	for (i = 0; i < axp20x->nr_cells; i++) {
++		if (!strcmp("axp288_extcon", axp20x->cells[i].name)) {
++			axp20x->cells[i].platform_data = (void *)pdata;
++			axp20x->cells[i].pdata_size = sizeof(*pdata);
++		}
++	}
++
++	return 0;
++}
++
++static void axp20x_alloc_pdata(struct axp20x_dev *axp20x)
++{
++	axp20x_extcon_pdata(axp20x);
++	axp20x_fg_pdata(axp20x);
++	axp20x_chrg_pdata(axp20x);
++}
++
++static void axp20x_delete_pdata(struct axp20x_dev *axp20x)
++{
++	int i;
++
++	for (i = 0; i < axp20x->nr_cells; i++) {
++		kfree(axp20x->cells[i].platform_data);
++		axp20x->cells[i].platform_data = NULL;
++		axp20x->cells[i].pdata_size = 0;
++	}
++}
++
+ static struct axp20x_dev *axp20x_pm_power_off;
+ static void axp20x_power_off(void)
+ {
+@@ -677,6 +877,7 @@ static int axp20x_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
++	axp20x_alloc_pdata(axp20x);
+ 	ret = mfd_add_devices(axp20x->dev, -1, axp20x->cells,
+ 			axp20x->nr_cells, NULL, 0, NULL);
+ 
+@@ -705,6 +906,7 @@ static int axp20x_i2c_remove(struct i2c_client *i2c)
+ 		pm_power_off = NULL;
+ 	}
+ 
++	axp20x_delete_pdata(axp20x);
+ 	mfd_remove_devices(axp20x->dev);
+ 	regmap_del_irq_chip(axp20x->i2c_client->irq, axp20x->regmap_irqc);
+ 
+-- 
+1.7.10.4
+

@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/hrt/hrt.cfg
+CONFIG_GENERIC_CLOCKEVENTS=y
+CONFIG_HIGH_RES_TIMERS=y

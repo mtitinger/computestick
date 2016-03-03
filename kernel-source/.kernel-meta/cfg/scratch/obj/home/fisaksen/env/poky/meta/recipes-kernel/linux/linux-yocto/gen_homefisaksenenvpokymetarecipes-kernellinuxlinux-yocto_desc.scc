@@ -1,0 +1,25 @@
+kconf required egg_remove_configs.cfg
+kconf required egg_touchscreen_configs.cfg
+kconf required egg_usb_configs.cfg
+kconf required egg_drm_configs.cfg
+kconf required egg_pmic_configs.cfg
+kconf required egg_pwm_light_configs.cfg
+kconf required egg_wifi_configs.cfg
+kconf required egg_cpu_scaling_configs.cfg
+patch 0001-Integrate-RTL8723BS-Wireless-driver.patch
+patch 0001-add-jsa1212-acpi-device-id-for-4.1-kernel.patch
+patch 0001-add-i2c-shared-controller-for-axp288.patch
+patch 0001-mfd-axp20x-Add-a-cell-for-the-power-button-part-of-t.patch
+patch 0001-MTP-driver.patch
+patch 0001-MTP-Uevent-for-connect-disconnect.patch
+patch 0001-AXP288-charger-merge-to-4.2-kernel.patch
+patch 0001-AXP288-fuel-gauge.patch
+patch 0001-add-axp2xx-fix.patch
+patch 0001-i2c-designware-4.2-kernel.patch
+patch 0001-mfd-axp20x-Extcon-Fuel-Gauge-and-Charger-platform-da.patch
+patch 0001-mmc-sdhci-get-runtime-pm-when-sdio-irq-is-enabled.patch
+patch 0001-mmc-sdhci-Support-maximum-DMA-latency-request-via-PM.patch
+patch 0003-mmc-sdhci-acpi-Fix-device-hang-on-Intel-BayTrail.patch
+patch 0001-PM-QoS-Add-pm_qos_cancel_request_lazy-that-doesn-t-s.patch
+patch 0004-mmc-sdhci-pci-Fix-device-hang-on-Intel-BayTrail.patch
+patch 0001-sdhci-h-file-DMA-latency.patch

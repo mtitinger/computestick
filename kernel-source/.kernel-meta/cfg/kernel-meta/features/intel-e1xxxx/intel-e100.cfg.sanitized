@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/intel-e1xxxx/intel-e100.cfg
+CONFIG_E100=y

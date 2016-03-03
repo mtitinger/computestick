@@ -1,0 +1,6 @@
+# 
+# Begin: .kernel-meta/cfg/linux-yocto/egg_drm_configs.cfg
+CONFIG_DRM_I915=m
+CONFIG_DRM_I915_KMS=m
+CONFIG_DRM_I915_FBDEV=m
+CONFIG_DRM_I915_PRELIMINARY_HW_SUPPORT=m

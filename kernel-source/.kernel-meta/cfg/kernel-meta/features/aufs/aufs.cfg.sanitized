@@ -1,0 +1,6 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/aufs/aufs.cfg
+CONFIG_AUFS_FS=y
+CONFIG_AUFS_BRANCH_MAX_127=y
+CONFIG_AUFS_SBILIST=y
+CONFIG_AUFS_BDEV_LOOP=y

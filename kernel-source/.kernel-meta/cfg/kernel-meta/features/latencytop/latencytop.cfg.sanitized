@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/latencytop/latencytop.cfg
+CONFIG_LATENCYTOP=y

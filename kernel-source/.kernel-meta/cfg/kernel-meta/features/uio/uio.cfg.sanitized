@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/uio/uio.cfg
+CONFIG_UIO=m

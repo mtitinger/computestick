@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/dca/dca.cfg
+CONFIG_INTEL_IOATDMA=m
+CONFIG_DCA=m

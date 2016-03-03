@@ -1,0 +1,24 @@
+From bdae79b2e0e0a46800498d815af8b42c0ad50790 Mon Sep 17 00:00:00 2001
+From: wasson <mike.zhang@wasson.com.hk>
+Date: Sat, 3 Oct 2015 17:01:03 +0800
+Subject: [PATCH 2/2] wasson remove misadd line
+
+---
+ drivers/iio/light/Kconfig |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+index 9790a10..a7706b6 100644
+--- a/drivers/iio/light/Kconfig
++++ b/drivers/iio/light/Kconfig
+@@ -35,7 +35,6 @@ config APDS9300
+ 	 ambient light sensor.
+ 
+ 	 To compile this driver as a module, choose M here: the
+-        private static int first_time = 1;
+ 	 module will be called apds9300.
+ 
+ config CM32181
+-- 
+1.7.9.5
+

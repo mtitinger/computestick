@@ -1,0 +1,4 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/input/input.cfg
+CONFIG_INPUT=y
+CONFIG_INPUT_EVDEV=y

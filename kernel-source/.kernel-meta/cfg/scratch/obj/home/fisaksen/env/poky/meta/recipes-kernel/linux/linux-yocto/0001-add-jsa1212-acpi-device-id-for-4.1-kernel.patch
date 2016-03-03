@@ -1,0 +1,24 @@
+From 10958986c892de2ba4740fb0e07c486316e71109 Mon Sep 17 00:00:00 2001
+From: Sudhakar Krishnan <sudhakar25@gmail.com>
+Date: Sat, 14 Nov 2015 12:07:38 -0800
+Subject: [PATCH] add jsa1212 acpi device id for 4.1 kernel
+
+---
+ drivers/iio/light/jsa1212.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/iio/light/jsa1212.c b/drivers/iio/light/jsa1212.c
+index 3a3af89..ee16132 100644
+--- a/drivers/iio/light/jsa1212.c
++++ b/drivers/iio/light/jsa1212.c
+@@ -443,6 +443,7 @@ static SIMPLE_DEV_PM_OPS(jsa1212_pm_ops, jsa1212_suspend, jsa1212_resume);
+ 
+ static const struct acpi_device_id jsa1212_acpi_match[] = {
+ 	{"JSA1212", 0},
++	{"JSA01212", 0},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, jsa1212_acpi_match);
+-- 
+1.9.1
+

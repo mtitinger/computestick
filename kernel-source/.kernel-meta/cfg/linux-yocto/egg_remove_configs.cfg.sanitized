@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/linux-yocto/egg_remove_configs.cfg
+# CONFIG_SOUND is not set

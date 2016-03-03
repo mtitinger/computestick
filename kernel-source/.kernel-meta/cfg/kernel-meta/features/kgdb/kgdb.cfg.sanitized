@@ -1,0 +1,5 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/kgdb/kgdb.cfg
+CONFIG_KGDB=y
+CONFIG_NETPOLL=y
+CONFIG_KGDB_KDB=y

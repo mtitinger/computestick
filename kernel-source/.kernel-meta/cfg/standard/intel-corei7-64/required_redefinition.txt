@@ -1,0 +1,66 @@
+Value of CONFIG_ATH_CARDS is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_ATH_CARDS=m
+New value: # CONFIG_ATH_CARDS is not set
+Value of CONFIG_BRCMFMAC_USB is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_BRCMFMAC_USB=y
+New value: # CONFIG_BRCMFMAC_USB is not set
+Value of CONFIG_BRCMSMAC is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_BRCMSMAC=m
+New value: # CONFIG_BRCMSMAC is not set
+Value of CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+New value: # CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND is not set
+Value of CONFIG_CPU_FREQ_GOV_ONDEMAND is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_cpu_scaling_configs.cfg.sanitized:
+Previous value: CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+New value: CONFIG_CPU_FREQ_GOV_ONDEMAND=m
+Value of CONFIG_CPU_FREQ_GOV_PERFORMANCE is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+New value: # CONFIG_CPU_FREQ_GOV_PERFORMANCE is not set
+Value of CONFIG_DRM_I915 is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_drm_configs.cfg.sanitized:
+Previous value: CONFIG_DRM_I915=y
+New value: CONFIG_DRM_I915=m
+Value of CONFIG_DRM_I915_KMS is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_drm_configs.cfg.sanitized:
+Previous value: CONFIG_DRM_I915_KMS=y
+New value: CONFIG_DRM_I915_KMS=m
+Value of CONFIG_DRM_I915_PRELIMINARY_HW_SUPPORT is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_drm_configs.cfg.sanitized:
+Previous value: CONFIG_DRM_I915_PRELIMINARY_HW_SUPPORT=y
+New value: CONFIG_DRM_I915_PRELIMINARY_HW_SUPPORT=m
+Value of CONFIG_MCORE2 is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_MCORE2=y
+New value: # CONFIG_MCORE2 is not set
+Value of CONFIG_NET_VENDOR_REALTEK is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_wifi_configs.cfg.sanitized:
+Previous value: CONFIG_NET_VENDOR_REALTEK=y
+New value: CONFIG_NET_VENDOR_REALTEK=m
+Value of CONFIG_PWM_LPSS is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pwm_light_configs.cfg.sanitized:
+Previous value: CONFIG_PWM_LPSS=m
+New value: CONFIG_PWM_LPSS=y
+Value of CONFIG_RFKILL is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_wifi_configs.cfg.sanitized:
+Previous value: CONFIG_RFKILL=y
+New value: CONFIG_RFKILL=m
+Value of CONFIG_SENSORS_CORETEMP is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg.sanitized:
+Previous value: CONFIG_SENSORS_CORETEMP=m
+New value: CONFIG_SENSORS_CORETEMP=y
+Value of CONFIG_SOUND is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_remove_configs.cfg.sanitized:
+Previous value: CONFIG_SOUND=y
+New value: # CONFIG_SOUND is not set
+Value of CONFIG_USB_ACM is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_usb_configs.cfg.sanitized:
+Previous value: CONFIG_USB_ACM=m
+New value: # CONFIG_USB_ACM is not set
+Value of CONFIG_USB_CDC_COMPOSITE is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_usb_configs.cfg.sanitized:
+Previous value: CONFIG_USB_CDC_COMPOSITE=m
+New value: # CONFIG_USB_CDC_COMPOSITE is not set
+Value of CONFIG_USB_G_PRINTER is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_usb_configs.cfg.sanitized:
+Previous value: CONFIG_USB_G_PRINTER=m
+New value: # CONFIG_USB_G_PRINTER is not set
+Value of CONFIG_USB_G_SERIAL is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_usb_configs.cfg.sanitized:
+Previous value: CONFIG_USB_G_SERIAL=m
+New value: # CONFIG_USB_G_SERIAL is not set
+Value of CONFIG_USB_G_WEBCAM is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_usb_configs.cfg.sanitized:
+Previous value: CONFIG_USB_G_WEBCAM=m
+New value: # CONFIG_USB_G_WEBCAM is not set
+Value of CONFIG_USB_WDM is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_usb_configs.cfg.sanitized:
+Previous value: CONFIG_USB_WDM=m
+New value: # CONFIG_USB_WDM is not set
+Value of CONFIG_WLAN_SDIO is redefined by fragment .kernel-meta/cfg/linux-yocto/egg_wifi_configs.cfg.sanitized:
+Previous value: CONFIG_WLAN_SDIO=y
+New value: CONFIG_WLAN_SDIO=m

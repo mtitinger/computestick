@@ -1,0 +1,3 @@
+# 
+# Begin: .kernel-meta/cfg/kernel-meta/features/crypto/crypto.cfg
+CONFIG_CRYPTO_ZLIB=m
