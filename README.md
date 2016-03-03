@@ -29,21 +29,7 @@ insert the prepared SDCard
 
 ## Wifi Driver ##
 
-Installing the RTL8723BS Wifi device
-
 > https://github.com/hadess/rtl8723bs
-
-
-
-A working internet connection is required for the first two steps below:
-
-    sudo apt-get install build-essential linux-headers-generic git
-    git clone https://github.com/codeTom/rtl8723bs.git
-    cd rtl8723bs
-    make
-    sudo make install
-    sudo depmod -a
-    sudo modprobe r8723bs
 
 ## Enabling wowlan ##
 
