@@ -1,0 +1,17 @@
+modprobe dw_dmac
+modprobe dw_dmac_core
+modprobe efivars
+modprobe rtl8723bs
+modprobe cfg80211
+modprobe uio
+modprobe usb_f_mtp
+modprobe libcomposite
+modprobe configfs
+modprobe bluetooth
+modprobe nfc
+modprobe rfkill
+modprobe spi_pxa2xx_platform
+modprobe i2c_designware_platform
+modprobe axp288_fuel_gauge
+modprobe axp288_adc
+modprobe industrialio
