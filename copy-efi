@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo mount /dev/sdc1 mnt
-sudo cp buildroot/output/images/bzImage mnt/boot
+sudo cp output/images/efi-part/* ./mnt -rf
 sync
 sudo umount mnt
 sudo eject /dev/sdc
