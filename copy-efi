@@ -1,8 +1,11 @@
 #!/bin/bash
 
 sudo mount /dev/sdc1 mnt
-sudo cp output/images/efi-part/* ./mnt -rf
+sudo cp buildroot/output/images/efi-part/* ./mnt -rf
+sudo cp buildroot/output/images/bzImage ./mnt
 sync
 sudo umount mnt
-sudo eject /dev/sdc
+
+echo "sudo tar -C /media/marc/rootfs/ -xvf buildroot/output/images/rootfs.tar"
+echo "sudo eject /dev/sdc"
 
