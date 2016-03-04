@@ -2,11 +2,19 @@
 
 ## Buildroot / Serial console debug setup ##
 
-Kernel command Line override:
+* Kernel command Line setup with grub.cfg
 
-CONFIG_CMDLINE="console=ttyS0,115200n8 root=/dev/mmcblk1p2 nomodeset acpi_enforce_resources=lax debug initcall_debug ignore_loglevel no_console_suspend"
+```
+set default="0"
+set timeout="5"
 
-Also see https://01.org/blogs/rzhang/2015/best-practice-debug-linux-suspend/hibernate-issues (thanks Frode)
+menuentry "pm-debug" {
+        linux /bzImage console=ttyS0,115200n8 root=/dev/mmcblk1p2 nomodeset ignore_loglevel no_console_suspend rootdelay=10
+}
+```
+
+* In buildroot, setup BR2_TARGET_GRUB2_BUILTIN_CONFIG to reference the custom grub.cfg in this git.
+* Also see https://01.org/blogs/rzhang/2015/best-practice-debug-linux-suspend/hibernate-issues (thanks Frode)
 
 ## Create SDCARD with EFI partition ##
 

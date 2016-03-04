@@ -496,9 +496,7 @@ CONFIG_HOTPLUG_CPU=y
 # CONFIG_BOOTPARAM_HOTPLUG_CPU0 is not set
 # CONFIG_DEBUG_HOTPLUG_CPU0 is not set
 # CONFIG_COMPAT_VDSO is not set
-CONFIG_CMDLINE_BOOL=y
-CONFIG_CMDLINE="console=ttyS0,115200n8 root=/dev/mmcblk1p2 nomodeset acpi_enforce_resources=lax debug initcall_debug ignore_loglevel no_console_suspend"
-CONFIG_CMDLINE_OVERRIDE=y
+# CONFIG_CMDLINE_BOOL is not set
 CONFIG_HAVE_LIVEPATCH=y
 # CONFIG_LIVEPATCH is not set
 CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
