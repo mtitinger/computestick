@@ -15,3 +15,5 @@ modprobe i2c_designware_platform
 modprobe axp288_fuel_gauge
 modprobe axp288_adc
 modprobe industrialio
+
+modprobe r8732bs
