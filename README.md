@@ -42,6 +42,22 @@ insert the prepared SDCard
 
 > https://github.com/hadess/rtl8723bs
 
+### generate the config file for wpa_supplicant ###
+
+$ wpa_passphrase myrouter > wpa.conf
+mypassphrase
+
+You should end up with a file looking like this:
+
+network={
+    ssid="myrouter"
+    #psk="mypassphrase"
+    psk=8ada1f8dbea59704ac379538b4d9191f6a72390581b4cd7a72864cea685b1a7f
+}
+
+wpa_supplicant -D nl80211,wext -i wlan0 -d -c/etc/wpa_supplicant.conf
+
+
 ## Enabling wowlan ##
 
 > iw phy0 wowlan enable any
