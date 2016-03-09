@@ -1,3 +1,10 @@
+# ACPI Debug #
+
+sudo apt-get install iasl
+
+cat /sys/firmware/acpi/tables/DSTD > dstd
+
+
 # ComputeStick Debug #
 
 ## Buildroot / Serial console debug setup ##
@@ -57,6 +64,9 @@ network={
 
 wpa_supplicant -D nl80211,wext -i wlan0 -d -c/etc/wpa_supplicant.conf
 
+ssid: NETGEAR42
+pwd: gentl...
+
 
 ## Enabling wowlan ##
 
@@ -96,3 +106,5 @@ dw_dmac_core           16675  1 dw_dmac
 video                  14883  1 i915
 i2c_designware_platform     7248  1
 spi_pxa2xx_platform    16350  0
+
+

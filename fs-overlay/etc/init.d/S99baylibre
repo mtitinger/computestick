@@ -1,0 +1,8 @@
+#!/bin/sh
+. /root/loadm
+
+wpa_supplicant -D nl80211 -i wlan0 -c/etc/wpa_supplicant.conf &
+sleep 2
+dhclient wlan0
+
+
