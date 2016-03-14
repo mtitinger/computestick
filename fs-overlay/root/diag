@@ -1,0 +1,3 @@
+iw phy0 wowlan enable any
+iw phy0 wowlan show
+
