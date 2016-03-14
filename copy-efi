@@ -6,6 +6,6 @@ sudo cp buildroot/output/images/bzImage ./mnt
 sync
 sudo umount mnt
 
-echo "sudo tar -C /media/marc/rootfs/ -xvf buildroot/output/images/rootfs.tar"
+echo "sudo tar -C /media/marc/rootfs/ -xvf buildroot/output/images/rootfs.tar > /dev/null"
 echo "sudo eject /dev/sdc"
 

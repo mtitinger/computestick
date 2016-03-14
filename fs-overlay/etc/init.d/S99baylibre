@@ -1,4 +1,7 @@
 #!/bin/sh
+
+mount -t debugfs nodev /sys/kernel/debug/
+
 . /root/loadm
 
 wpa_supplicant -D nl80211 -i wlan0 -c/etc/wpa_supplicant.conf &
