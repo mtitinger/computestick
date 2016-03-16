@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/input/touchscreen.cfg
-CONFIG_INPUT_TOUCHSCREEN=y

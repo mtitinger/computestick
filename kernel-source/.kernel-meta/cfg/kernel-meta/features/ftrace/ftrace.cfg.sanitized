@@ -1,5 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/ftrace/ftrace.cfg
-CONFIG_FUNCTION_TRACER=y
-CONFIG_FUNCTION_GRAPH_TRACER=y
-CONFIG_FTRACE_SYSCALLS=y

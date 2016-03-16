@@ -1,4 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/usb/ehci-hcd.cfg
-CONFIG_USB_EHCI_HCD=y
-CONFIG_USB_EHCI_ROOT_HUB_TT=y

@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/soc/braswell/braswell.cfg
-CONFIG_DRM_I915_PRELIMINARY_HW_SUPPORT=y

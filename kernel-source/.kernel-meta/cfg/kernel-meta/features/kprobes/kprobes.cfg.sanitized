@@ -1,4 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/kprobes/kprobes.cfg
-CONFIG_KPROBES=y
-CONFIG_KPROBE_EVENT=y

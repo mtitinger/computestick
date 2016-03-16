@@ -1,6 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/fs/ext4.cfg
-CONFIG_EXT4_FS=y
-CONFIG_EXT4_USE_FOR_EXT23=y
-CONFIG_EXT4_FS_POSIX_ACL=y
-CONFIG_EXT4_FS_SECURITY=y

@@ -1,6 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/usb-mass-storage.cfg
-CONFIG_USB_STORAGE=y
-CONFIG_VFAT_FS=y
-CONFIG_FAT_FS=y
-CONFIG_MSDOS_FS=y

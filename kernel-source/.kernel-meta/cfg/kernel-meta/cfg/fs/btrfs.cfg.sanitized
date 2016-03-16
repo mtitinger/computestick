@@ -1,4 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/fs/btrfs.cfg
-CONFIG_BTRFS_FS=y
-CONFIG_BTRFS_FS_POSIX_ACL=y

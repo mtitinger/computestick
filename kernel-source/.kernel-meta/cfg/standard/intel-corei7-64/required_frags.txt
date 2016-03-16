@@ -1,8 +1,0 @@
-/linux-yocto/egg_remove_configs.cfg
-/linux-yocto/egg_touchscreen_configs.cfg
-/linux-yocto/egg_usb_configs.cfg
-/linux-yocto/egg_drm_configs.cfg
-/linux-yocto/egg_pmic_configs.cfg
-/linux-yocto/egg_pwm_light_configs.cfg
-/linux-yocto/egg_wifi_configs.cfg
-/linux-yocto/egg_cpu_scaling_configs.cfg

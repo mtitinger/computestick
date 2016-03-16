@@ -1,5 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/uprobe/uprobe.cfg
-CONFIG_UPROBES=y
-CONFIG_UPROBE_EVENT=y
-CONFIG_PERF_EVENTS=y

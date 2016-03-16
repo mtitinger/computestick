@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/scsi/disk.cfg
-CONFIG_BLK_DEV_SD=y

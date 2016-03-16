@@ -1,5 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/mac80211/mac80211.cfg
-CONFIG_WLAN=y
-CONFIG_MAC80211=m
-CONFIG_CFG80211=m

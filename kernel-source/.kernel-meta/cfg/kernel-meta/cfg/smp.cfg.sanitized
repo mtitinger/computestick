@@ -1,5 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/smp.cfg
-CONFIG_SMP=y
-CONFIG_SCHED_SMT=y
-CONFIG_NR_CPUS=64

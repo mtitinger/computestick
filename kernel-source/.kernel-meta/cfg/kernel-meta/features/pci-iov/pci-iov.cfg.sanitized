@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/pci-iov/pci-iov.cfg
-CONFIG_PCI_IOV=y

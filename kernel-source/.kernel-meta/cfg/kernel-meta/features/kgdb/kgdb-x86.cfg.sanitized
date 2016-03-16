@@ -1,4 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/kgdb/kgdb-x86.cfg
-CONFIG_KDB_KEYBOARD=y
-CONFIG_KGDB_LOW_LEVEL_TRAP=y

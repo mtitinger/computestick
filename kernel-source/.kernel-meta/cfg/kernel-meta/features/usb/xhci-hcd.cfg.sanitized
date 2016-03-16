@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/usb/xhci-hcd.cfg
-CONFIG_USB_XHCI_HCD=y

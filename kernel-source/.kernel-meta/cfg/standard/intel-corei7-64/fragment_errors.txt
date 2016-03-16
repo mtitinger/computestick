@@ -1,4 +1,0 @@
-Warning: Value of CONFIG_CPU_FREQ_GOV_PERFORMANCE is defined multiple times within fragment .kernel-meta/cfg/linux-yocto/egg_pmic_configs.cfg:
-# CONFIG_CPU_FREQ_GOV_PERFORMANCE is not set
-# CONFIG_CPU_FREQ_GOV_PERFORMANCE is not set
-

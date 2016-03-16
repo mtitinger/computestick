@@ -1,6 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/timer/hpet.cfg
-CONFIG_HPET_TIMER=y
-CONFIG_HPET_EMULATE_RTC=y
-CONFIG_HPET=y
-CONFIG_HPET_MMAP=y

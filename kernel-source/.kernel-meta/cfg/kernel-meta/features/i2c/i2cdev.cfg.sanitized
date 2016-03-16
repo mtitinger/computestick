@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/i2c/i2cdev.cfg
-CONFIG_I2C_CHARDEV=m

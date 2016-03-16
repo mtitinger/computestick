@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/spi/spidev.cfg
-CONFIG_SPI_SPIDEV=m

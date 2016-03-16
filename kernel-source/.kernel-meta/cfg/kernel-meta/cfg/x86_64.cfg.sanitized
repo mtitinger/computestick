@@ -1,5 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/x86_64.cfg
-CONFIG_64BIT=y
-CONFIG_IA32_EMULATION=y
-CONFIG_COMPAT=y

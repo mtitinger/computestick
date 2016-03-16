@@ -1,4 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/media/media-platform.cfg
-CONFIG_V4L_MEM2MEM_DRIVERS=y
-CONFIG_VIDEO_MEM2MEM_DEINTERLACE=m

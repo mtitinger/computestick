@@ -1,8 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/pci/pci.cfg
-CONFIG_PCI=y
-CONFIG_PCI_MMCONFIG=y
-CONFIG_PCI_MSI=y
-CONFIG_PCIEPORTBUS=y
-CONFIG_HOTPLUG_PCI=y
-# CONFIG_HOTPLUG_PCI_PCIE is not set

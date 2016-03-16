@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/timer/no_hz.cfg
-CONFIG_NO_HZ=y

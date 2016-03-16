@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/bluetooth/bluetooth-usb.cfg
-CONFIG_BT_HCIBTUSB=m

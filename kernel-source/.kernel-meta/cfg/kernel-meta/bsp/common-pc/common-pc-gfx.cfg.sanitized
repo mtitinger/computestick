@@ -1,8 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/bsp/common-pc/common-pc-gfx.cfg
-CONFIG_FB=y
-CONFIG_FB_MODE_HELPERS=y
-CONFIG_CONNECTOR=y
-CONFIG_FB_UVESA=m
-CONFIG_FRAMEBUFFER_CONSOLE=y
-CONFIG_DRM_CIRRUS_QEMU=m

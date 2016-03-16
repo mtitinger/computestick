@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/bsp/intel-common/intel-corei7-64.cfg
-CONFIG_MCORE2=y

@@ -1,4 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/cfg/dmaengine.cfg
-CONFIG_DMADEVICES=y
-CONFIG_DMA_ENGINE=y

@@ -1,5 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/nfc/nfc-vendor.cfg
-CONFIG_NFC_PN533=m
-CONFIG_NFC_MRVL=m
-CONFIG_NFC_MRVL_USB=m

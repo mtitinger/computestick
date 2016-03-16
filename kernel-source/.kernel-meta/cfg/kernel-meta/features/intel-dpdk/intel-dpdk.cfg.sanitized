@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/intel-dpdk/intel-dpdk.cfg
-CONFIG_PCI_MSI=y

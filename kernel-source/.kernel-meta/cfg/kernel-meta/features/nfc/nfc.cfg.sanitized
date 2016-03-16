@@ -1,3 +1,0 @@
-# 
-# Begin: .kernel-meta/cfg/kernel-meta/features/nfc/nfc.cfg
-CONFIG_NFC=m
