@@ -1,0 +1,11 @@
+# ACPI Debug bootargs#
+
+acpi.debug_level=0x2 acpi.debug_layer=0xFFFFFFFF
+
+from Documentation/acpi/initrd_table_override.txt
+
+# yocto rebuild the kernel #
+
+bitbake -f -c deploy linux-yocto
+bitbake -c menuconfig linux-yocto
+bitbake -c listtasks linux-yocto
