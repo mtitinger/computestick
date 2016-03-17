@@ -1,0 +1,1 @@
+iasl -d dsdt.dat
