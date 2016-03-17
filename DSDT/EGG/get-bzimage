@@ -1,0 +1,1 @@
+scp fisaksen@build.baylibre.com:/home/fisaksen/env/poky/build/tmp/deploy/images/valleyisland-64/bzImage . 
